@@ -1,26 +1,28 @@
+from node import Node
+
 class Edge:
-    def __init__(self, name, start_node, end_node, weight=0, is_two_way=False):
+    def __init__(self, name, start_node: Node, end_node: Node, weight=1,):
         self.name = name
         self.start_node = start_node
         self.end_node = end_node
         self.weight = weight
-        self.is_two_way = is_two_way
+
+    def __eq__(self, edge):
+        if isinstance(edge, Edge):
+            return self.name == edge.name
+        return False
+        
 
     def to_string(self):
-        result = f'Edge({self.start_node}--'
+        result = f'Edge({self.start_node.to_string()}--'
 
         if self.weight == 0:
-            result += f'{self.weight}'
+            result += f'{self.name}({self.weight})'
         else:
             result += f'--'
 
         result += f'--'
-
-        if self.is_two_way:
-            result += f'{self.end_node}'
-        else:
-            result += f'>{self.end_node}'
-
+        result += f'>{self.end_node.to_string()}'
         result += f')'
 
         return result

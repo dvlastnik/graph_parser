@@ -1,7 +1,9 @@
 class Node:
-    def __init__(self, name: str):
+    def __init__(self, name: str, value=0):
         self.name = name
-        self.edges = []
+        self.value = value
 
-    def add_edge(self, edge):
-        self.edges.append(edge)
+    def to_string(self):
+        if self.value == 0:
+            return f'Node({self.name})'
+        return f'Node({self.name}, {self.value})'
