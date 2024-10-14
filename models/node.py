@@ -1,9 +1,9 @@
 class Node:
-    def __init__(self, name: str, value=0):
+    def __init__(self, name: str, weight=0):
         self.name = name
-        self.value = value
+        self.weight = weight
 
     def to_string(self):
-        if self.value == 0:
-            return f'Node({self.name})'
-        return f'Node({self.name}, {self.value})'
+        if self.weight == 0:
+            return f'({self.name})'
+        return f'({self.name}, {self.weight})'
