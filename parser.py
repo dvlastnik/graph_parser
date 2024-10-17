@@ -49,13 +49,34 @@ def load_graph(args):
 
                 graph.add_edge(edge=edge)
 
-        graph.print_graph()
+        return graph
+    
+def print_options_and_return() -> int:
+    valid_inputs = [1, 2]
+    print(f'{valid_inputs[0]}. Properties')
+    print(f'{valid_inputs[1]}. Matrix')
+    
+    option = int(input())
+    if option not in valid_inputs:
+        print('Not a valid option, ending script...')
+        return -1
+    return option
 
 def main():
     args = parse_args()
+    main_graph = Graph()
 
     try:
-        load_graph(args)
+        main_graph = load_graph(args)
+        
+        option = print_options_and_return()
+        if option == 1:
+            main_graph.print_properties()
+        elif option == 2:
+            pass
+        elif option == -1:
+            pass
+
     except FileNotFoundError:
         print(f'Error: Input file with name {args.input} does not exist.')
     except ValueError as e:

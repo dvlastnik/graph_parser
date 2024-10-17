@@ -3,6 +3,17 @@ class Node:
         self.name = name
         self.weight = weight
 
+    def __lt__(self, other):
+        return self.name < other.name
+    
+    def __hash__(self):
+        return hash(self.name)
+
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return self.name == other.name and self.weight == other.weight
+        return False
+
     def to_string(self):
         if self.weight == 0:
             return f'({self.name})'

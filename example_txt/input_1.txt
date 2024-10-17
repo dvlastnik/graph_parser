@@ -1,0 +1,27 @@
+u A;
+u B;
+u C;
+u D;
+u E;
+u F;
+u G;
+u H;
+u I;
+u J;
+u K;
+
+h A - B 8 :h1;
+h A - C 7 :h2;
+h A - E 5 :h3;
+h B - D 2 :h4;
+h B - G 11 :h5;
+h B - H 4 :h6;
+h C - D 6 :h7;
+h E - F 6 :h8;
+h F - G 3 :h9;
+h F - J 6 :h10;
+h G - I 9 :h11;
+h H - I 5 :h12;
+h I - J 14 :h13;
+h I - K 6 :h14;
+h J - K 15 :h15;
