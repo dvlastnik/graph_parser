@@ -1,0 +1,12 @@
+u A;
+u D;
+u B;
+u F;
+h A - F 5 :h1;
+h A - D 1 :h3;
+u B;
+u E;
+h F - B 4 :h2;
+h B - D 2 :h4;
+h D - E 3 :h5;
+h E - B 4 :h6;

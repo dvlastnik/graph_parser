@@ -16,7 +16,7 @@ u D;
 h F < I 7 :h8;
 u H;
 u E;
-h J > H 15 :h9;
+h H < J 15 :h9;
 h H > E 12 :h10;
 h D > D 1 :h11;
 h F > F 4 :h12;

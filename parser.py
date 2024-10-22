@@ -40,9 +40,14 @@ def load_graph(args):
                     raise ValueError(f'Line does not contain necessary edge info: {line}')
                 
                 edge = Edge(start_node=Node(line[1]), direction=EdgeDirection.from_string(line[2]), end_node=Node(line[3]))
+                if EdgeDirection.from_string(line[2]) == EdgeDirection.REVERSE:
+                    edge = Edge(start_node=Node(line[3]), direction=EdgeDirection.FORWARD, end_node=Node(line[1]))
 
                 if len(line) >= 5:
-                    edge.weight = int(line[4])
+                    if line[4].startswith(':'):
+                        edge.name = line[4].strip(':')
+                    else:
+                        edge.weight = int(line[4])
 
                 if len(line) >= 6:
                     edge.name = line[5].strip(':')
@@ -52,9 +57,10 @@ def load_graph(args):
         return graph
     
 def print_options_and_return() -> int:
-    valid_inputs = [1, 2]
+    valid_inputs = [1, 2, 3]
     print(f'{valid_inputs[0]}. Properties')
     print(f'{valid_inputs[1]}. Matrix')
+    print(f'{valid_inputs[2]}. Print graph')
     
     option = int(input())
     if option not in valid_inputs:
@@ -73,7 +79,9 @@ def main():
         if option == 1:
             main_graph.print_properties()
         elif option == 2:
-            pass
+            main_graph.print_adjacency_matrix()
+        elif option == 3:
+            main_graph.print_graph()
         elif option == -1:
             pass
 

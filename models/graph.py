@@ -11,6 +11,7 @@ class Graph:
         self.edges: List[Edge] = []
 
         self.edges_set = set()
+        self.sorted_nodes: List[str] = []
         self.nodes_map = {}
 
         self.weighted = False
@@ -23,9 +24,6 @@ class Graph:
         self.nodes_map[node.name] = 0
 
     def add_edge(self, edge: Edge):
-        if edge in self.edges and edge.name != '':
-            raise ValueError(f'Edge with name: {edge.name} is already in list of edges.')
-
         self.edges.append(edge)
         self.nodes_map[edge.start_node.name] += 1
         self.nodes_map[edge.end_node.name] += 1
@@ -46,6 +44,12 @@ class Graph:
         else:
             self.edges_set.add(node_pair)
             self.simple = True
+
+    def sort_nodes(self):
+        for node in self.nodes:
+            self.sorted_nodes.append(node.name)
+        
+        self.sorted_nodes = sorted(self.sorted_nodes)
 
     def contains_k5(self):
         if len(self.nodes) < 5:
@@ -109,9 +113,11 @@ class Graph:
     def is_directed(self) -> bool:
         if self.directed:
             for edge in self.edges:
-                reversed_edge = Edge(start_node=edge.end_node, end_node=edge.start_node, direction=edge.direction)
+                reversed_edge_1 = Edge(start_node=edge.end_node, end_node=edge.start_node, direction=edge.direction)
+                reversed_edge_2 = Edge(start_node=edge.start_node, end_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction))
 
-                if reversed_edge not in self.edges:
+                if reversed_edge_1 not in self.edges or reversed_edge_2 not in self.edges:
+                    self.directed = True
                     return True
                 
         return False
@@ -232,3 +238,33 @@ class Graph:
         print(f'Planar (rovinny): {self.is_planar()}')
         print(f'Finite (konecny): {self.is_finite()}')
         print(f'Regular (regularni): {self.is_regular()}')
+
+    # Matrixes
+    def adjacency_matrix(self):
+        self.sort_nodes() # TODO: Remove
+        self.is_directed() # TODO: Remove
+        n = len(self.nodes)
+        matrix = [[0] * n for _ in range(n)]
+        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
+
+        for edge in self.edges:
+            start = edge.start_node
+            end = edge.end_node
+            
+            matrix[node_index[start.name]][node_index[end.name]] += 1
+
+            if not self.directed:
+                matrix[node_index[end.name]][node_index[start.name]] = 1
+
+        return matrix
+    
+    def print_adjacency_matrix(self):
+        matrix = self.adjacency_matrix()
+        
+        print('-----------------')
+        print('Adjacency matrix (Matice sousednosti)')
+        print()
+        print(' ', ' '.join(self.sorted_nodes))
+        for i, row in enumerate(matrix):
+            print(f"{self.sorted_nodes[i]} {' '.join(map(str, row))}")
+        print()

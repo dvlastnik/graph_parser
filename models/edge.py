@@ -11,6 +11,12 @@ class EdgeDirection(Enum):
     def from_string(value: str):
         return EdgeDirection(value=value)
     
+    @staticmethod
+    def get_opposite(value):
+        if value == EdgeDirection.FORWARD:
+            return EdgeDirection.REVERSE
+        return EdgeDirection.FORWARD
+    
 class Edge:
     def __init__(self, start_node: Node, direction: EdgeDirection, end_node: Node):
         self.start_node = start_node
@@ -21,8 +27,10 @@ class Edge:
 
     def __eq__(self, edge):
         if isinstance(edge, Edge):
-            return self.name == edge.name
+            return self.start_node == edge.start_node and self.end_node == edge.end_node and self.direction == edge.direction
         return False
+    
+
 
     def to_string(self):
         result = f'{self.start_node.to_string()}'
