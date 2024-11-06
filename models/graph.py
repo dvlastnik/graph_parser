@@ -2,6 +2,7 @@ from typing import Set, List
 from collections import deque
 from itertools import combinations
 
+from models.matrix import Matrix
 from models.node import Node
 from models.edge import Edge, EdgeDirection
 
@@ -60,7 +61,7 @@ class Graph:
     def get_normalized_edges(self):
         normalized_edges: List[Edge] = []
 
-        for edge in normalized_edges:
+        for edge in self.edges:
             if edge.direction == EdgeDirection.REVERSE:
                 normalized_edges.append(Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node))
             else:
@@ -260,3 +261,33 @@ class Graph:
             print('Konecny (finite)')
         if self.is_regular():
             print('Regularni (regular)')
+
+    # MATRIXES
+    def get_ready_for_matrix_operations(self):
+        self.sort_nodes()
+        self.sort_edges()
+
+    # Matice sousednosti
+    def adjacency_matrix(self):
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
+        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
+        normalized_edges = self.get_normalized_edges()
+
+        for edge in normalized_edges:
+            start = edge.start_node
+            end = edge.end_node
+            start_idx = node_index[start.name]
+            end_idx = node_index[end.name]
+
+            matrix.increment_value(start_idx, end_idx)
+
+            if not self.directed:
+                matrix.increment_value(end_idx, start_idx)
+
+        return matrix
+    
+    def print_adjacency_matrix(self):
+        matrix = self.adjacency_matrix()
+        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+
+    # Matice incidencee

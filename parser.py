@@ -89,10 +89,11 @@ def main():
             main_graph.print_properties()
 
         elif option == 2:
+            main_graph.get_ready_for_matrix_operations()
             option = print_matrix_options_and_return()
 
             if option == 1:
-                pass # TODO
+                main_graph.print_adjacency_matrix()
 
             elif option == 2:
                 pass # TODO
