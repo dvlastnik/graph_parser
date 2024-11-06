@@ -63,11 +63,15 @@ class Graph:
 
         for edge in self.edges:
             if edge.direction == EdgeDirection.REVERSE:
-                normalized_edges.append(Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node))
+                normalized_edge = Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node, name=edge.name)
+                normalized_edges.append(normalized_edge)
             else:
                 normalized_edges.append(edge)
-
+        print()
         return normalized_edges
+    
+    def get_edge_names(self):
+        return [edge.name for edge in self.get_normalized_edges()]
 
     def contains_k5(self):
         if len(self.nodes) < 5:
@@ -268,7 +272,7 @@ class Graph:
         self.sort_edges()
 
     # Matice sousednosti
-    def adjacency_matrix(self):
+    def adjacency_matrix(self) -> Matrix:
         matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
         node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
         normalized_edges = self.get_normalized_edges()
@@ -290,4 +294,30 @@ class Graph:
         matrix = self.adjacency_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
 
+        return matrix
+
     # Matice incidencee
+    def incidence_matrix(self) -> Matrix:
+        normalized_edges = self.get_normalized_edges()
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(normalized_edges))
+        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
+
+        for col, edge in enumerate(normalized_edges):
+            start = node_index[edge.start_node.name]
+            end = node_index[edge.end_node.name]
+
+            if start == end:
+                matrix.set_value(start, col, 2)
+            else:
+                matrix.set_value(start, col, 1)
+
+                if not self.directed:
+                    matrix.set_value(end, col, 1)
+                elif self.directed:
+                    matrix.set_value(end, col, -1)
+
+        return matrix
+
+    def print_incidence_matrix(self):
+        matrix = self.incidence_matrix()
+        matrix.print_matrix_with_headers(self.sorted_nodes, self.get_edge_names())

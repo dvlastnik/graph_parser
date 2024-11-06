@@ -23,6 +23,15 @@ class Matrix:
         if col_headers:
             print(' ', ' '.join(col_headers))
         for i, row in enumerate(self.matrix):
+            row_str = ''
+
+            for r in row:
+                row_str += str(r)
+                if r >= 0:
+                    row_str += ' ' * len(col_headers[0])
+                elif r < 0:
+                    row_str += ' ' * (len(col_headers[0]) - 1)
+
             row_name = row_headers[i] if row_headers else str(i)
-            print(f"{row_name} {' '.join(map(str, row))}")
+            print(f"{row_name} {row_str}")
         print()

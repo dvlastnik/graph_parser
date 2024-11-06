@@ -69,7 +69,7 @@ def print_options_and_return() -> int:
 def print_matrix_options_and_return() -> int:
     valid_inputs = [1, 2]
     print(f'{valid_inputs[0]}. Adjacency matrix (Matice sousednosti)')
-    print(f'{valid_inputs[1]}. Matice incidence')
+    print(f'{valid_inputs[1]}. Incidence matrix (Matice incidence)')
 
     option = int(input())
     if option not in valid_inputs:
@@ -96,7 +96,7 @@ def main():
                 main_graph.print_adjacency_matrix()
 
             elif option == 2:
-                pass # TODO
+                main_graph.print_incidence_matrix()
             
             elif option == -1:
                 pass
