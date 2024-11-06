@@ -1,4 +1,5 @@
 from enum import Enum
+import re
 
 from models.node import Node
 
@@ -18,19 +19,23 @@ class EdgeDirection(Enum):
         return EdgeDirection.FORWARD
     
 class Edge:
-    def __init__(self, start_node: Node, direction: EdgeDirection, end_node: Node):
+    def __init__(self, start_node: Node, direction: EdgeDirection, end_node: Node, weight=1, name=''):
         self.start_node = start_node
         self.direction = direction
         self.end_node = end_node
-        self.weight = 1
-        self.name = ''
+        self.weight = weight
+        self.name = name
 
     def __eq__(self, edge):
         if isinstance(edge, Edge):
             return self.start_node == edge.start_node and self.end_node == edge.end_node and self.direction == edge.direction
         return False
     
+    @staticmethod
+    def extract_number_from_name(edge):
+        result = re.search(r'\d+$', edge.name)
 
+        return int(result.group()) if result else float('inf')
 
     def to_string(self):
         result = f'{self.start_node.to_string()}'

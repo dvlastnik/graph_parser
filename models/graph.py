@@ -16,7 +16,7 @@ class Graph:
 
         self.weighted = False
         self.directed = False
-        self.simple = False
+        self.simple = True
     
     # UTILITIES
     def add_node(self, node: Node):
@@ -27,6 +27,9 @@ class Graph:
         self.edges.append(edge)
         self.nodes_map[edge.start_node.name] += 1
         self.nodes_map[edge.end_node.name] += 1
+
+        if edge.weight > 1:
+            self.weighted = True
 
         node_pair = None
         if edge.direction == EdgeDirection.BOTH:
@@ -50,6 +53,20 @@ class Graph:
             self.sorted_nodes.append(node.name)
         
         self.sorted_nodes = sorted(self.sorted_nodes)
+
+    def sort_edges(self):
+        self.edges.sort(key=Edge.extract_number_from_name)
+
+    def get_normalized_edges(self):
+        normalized_edges: List[Edge] = []
+
+        for edge in normalized_edges:
+            if edge.direction == EdgeDirection.REVERSE:
+                normalized_edges.append(Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node))
+            else:
+                normalized_edges.append(edge)
+
+        return normalized_edges
 
     def contains_k5(self):
         if len(self.nodes) < 5:
@@ -94,6 +111,7 @@ class Graph:
 
     # Prosty
     def is_simple(self) -> bool:
+        # TODO: Check that if is directed with A > B and A < B
         return self.simple
     
     # Jednoduchy
@@ -111,16 +129,7 @@ class Graph:
 
     # Orientovany
     def is_directed(self) -> bool:
-        if self.directed:
-            for edge in self.edges:
-                reversed_edge_1 = Edge(start_node=edge.end_node, end_node=edge.start_node, direction=edge.direction)
-                reversed_edge_2 = Edge(start_node=edge.start_node, end_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction))
-
-                if reversed_edge_1 not in self.edges or reversed_edge_2 not in self.edges:
-                    self.directed = True
-                    return True
-                
-        return False
+        return self.directed
 
     # Ohodnoceny
     def is_weighted(self) -> bool:
@@ -225,46 +234,29 @@ class Graph:
             return False
 
     def print_properties(self):
-        print(f'Empty (prazdny): {self.is_empty()}')
-        print(f'Discrate (diskretni): {self.is_discrate()}')
-        print(f'Simple (prosty): {self.is_simple()}')
-        print(f'Easy (jednoduchy): {self.is_easy()}')
-        print(f'Multi (multigraf): {self.is_multi()}')
-        print(f'Directed (orientovany): {self.is_directed()}')
-        print(f'Weighted (ohodnoceny): {self.is_weighted()}')
-        print(f'Complete (uplny): {self.is_complete()}')
-        print(f'Bipartite (bipartitni): {self.is_bipartite()}')
-        print(f'Connected (souvisly): {self.is_connected()}')
-        print(f'Planar (rovinny): {self.is_planar()}')
-        print(f'Finite (konecny): {self.is_finite()}')
-        print(f'Regular (regularni): {self.is_regular()}')
-
-    # Matrixes
-    def adjacency_matrix(self):
-        self.sort_nodes() # TODO: Remove
-        self.is_directed() # TODO: Remove
-        n = len(self.nodes)
-        matrix = [[0] * n for _ in range(n)]
-        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
-
-        for edge in self.edges:
-            start = edge.start_node
-            end = edge.end_node
-            
-            matrix[node_index[start.name]][node_index[end.name]] += 1
-
-            if not self.directed:
-                matrix[node_index[end.name]][node_index[start.name]] = 1
-
-        return matrix
-    
-    def print_adjacency_matrix(self):
-        matrix = self.adjacency_matrix()
-        
-        print('-----------------')
-        print('Adjacency matrix (Matice sousednosti)')
-        print()
-        print(' ', ' '.join(self.sorted_nodes))
-        for i, row in enumerate(matrix):
-            print(f"{self.sorted_nodes[i]} {' '.join(map(str, row))}")
-        print()
+        if self.is_weighted():
+            print('Ohodnoceny (weighted)')
+        if self.is_directed():
+            print('Orientovany (directed)')
+        if self.is_empty():
+            print('Prazdny (empty)')
+        if self.is_discrate():
+            print('Diskretni (discrate)')
+        if self.is_simple():
+            print('Prosty (simple)')
+        if self.is_easy():
+            print('Jednoduchy (easy)')
+        if self.is_multi():
+            print('Multigraf (multigraph)')
+        if self.is_complete():
+            print('Uplny (complete)')
+        if self.is_bipartite():
+            print('Bipartitni (bipartite)')
+        if self.is_connected():
+            print('Souvisly (connected)')
+        if self.is_planar():
+            print('Rovinny (planar)')
+        if self.is_finite():
+            print('Konecny (finite)')
+        if self.is_regular():
+            print('Regularni (regular)')

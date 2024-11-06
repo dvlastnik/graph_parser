@@ -40,8 +40,6 @@ def load_graph(args):
                     raise ValueError(f'Line does not contain necessary edge info: {line}')
                 
                 edge = Edge(start_node=Node(line[1]), direction=EdgeDirection.from_string(line[2]), end_node=Node(line[3]))
-                if EdgeDirection.from_string(line[2]) == EdgeDirection.REVERSE:
-                    edge = Edge(start_node=Node(line[3]), direction=EdgeDirection.FORWARD, end_node=Node(line[1]))
 
                 if len(line) >= 5:
                     if line[4].startswith(':'):
@@ -68,6 +66,17 @@ def print_options_and_return() -> int:
         return -1
     return option
 
+def print_matrix_options_and_return() -> int:
+    valid_inputs = [1, 2]
+    print(f'{valid_inputs[0]}. Adjacency matrix (Matice sousednosti)')
+    print(f'{valid_inputs[1]}. Matice incidence')
+
+    option = int(input())
+    if option not in valid_inputs:
+        print('Not a valid option, ending script...')
+        return -1
+    return option
+
 def main():
     args = parse_args()
     main_graph = Graph()
@@ -78,10 +87,22 @@ def main():
         option = print_options_and_return()
         if option == 1:
             main_graph.print_properties()
+
         elif option == 2:
-            main_graph.print_adjacency_matrix()
+            option = print_matrix_options_and_return()
+
+            if option == 1:
+                pass # TODO
+
+            elif option == 2:
+                pass # TODO
+            
+            elif option == -1:
+                pass
+
         elif option == 3:
             main_graph.print_graph()
+
         elif option == -1:
             pass
 
