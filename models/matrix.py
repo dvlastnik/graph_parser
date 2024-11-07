@@ -14,6 +14,34 @@ class Matrix:
     
     def increment_value(self, row: int, col: int):
         self.matrix[row][col] += 1
+
+    def multiply(self, other: 'Matrix') -> 'Matrix':
+        if self.cols != other.rows:
+            raise ValueError("Number of columns in the first matrix must equal the number of rows in the second matrix.")
+        
+        result = Matrix(self.rows, other.cols)
+        
+        for i in range(self.rows):
+            for j in range(other.cols):
+                sum_product = 0
+                for k in range(self.cols):
+                    sum_product += self.get_value(i, k) * other.get_value(k, j)
+                result.set_value(i, j, sum_product)
+        
+        return result
+    
+    def multiply_self_on_n(self, n) -> 'Matrix':
+        if n < 2:
+            return self
+
+        result = self
+
+        for _ in range(n - 1):
+            result.print_matrix()
+            print()
+            result = result.multiply(self)
+
+        return result
     
     def print_matrix(self):
         for row in self.matrix:
