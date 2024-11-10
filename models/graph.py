@@ -14,6 +14,7 @@ class Graph:
         self.edges_set = set()
         self.sorted_nodes: List[str] = []
         self.nodes_map = {}
+        self.normalized_edges: List[Edge] = []
 
         self.weighted = False
         self.directed = False
@@ -58,20 +59,16 @@ class Graph:
     def sort_edges(self):
         self.edges.sort(key=Edge.extract_number_from_name)
 
-    def get_normalized_edges(self):
-        normalized_edges: List[Edge] = []
-
+    def normalize_edges(self):
         for edge in self.edges:
             if edge.direction == EdgeDirection.REVERSE:
                 normalized_edge = Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node, name=edge.name)
-                normalized_edges.append(normalized_edge)
+                self.normalized_edges.append(normalized_edge)
             else:
-                normalized_edges.append(edge)
-        print()
-        return normalized_edges
+                self.normalized_edges.append(edge)
     
     def get_edge_names(self):
-        return [edge.name for edge in self.get_normalized_edges()]
+        return [edge.name for edge in self.normalized_edges]
 
     def contains_k5(self):
         if len(self.nodes) < 5:
@@ -100,6 +97,10 @@ class Graph:
 
     def print_graph(self):
         for edge in self.edges:
+            print(edge.to_string())
+
+    def print_normalized_graph(self):
+        for edge in self.normalized_edges:
             print(edge.to_string())
 
     # PROPERTIES METHODS
@@ -266,18 +267,57 @@ class Graph:
         if self.is_regular():
             print('Regularni (regular)')
 
+    # CHARACTERISTICS
+    def get_ready_for_characteristics(self):
+        self.sort_nodes()
+        self.sort_edges()
+        self.normalize_edges()
+
+    def get_node_successors(self, node_name: str) -> set:
+        result = set()
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.start_node.name == node_name:
+                    result.add(edge.end_node.name)
+            else:
+                if edge.start_node.name == node_name:
+                    result.add(edge.end_node.name)
+                elif edge.end_node.name == node_name:
+                    result.add(edge.start_node.name)
+
+        return result
+    
+    def get_node_ancestors(self, node_name: str) -> set:
+        result = set()
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.end_node.name == node_name:
+                    result.add(edge.start_node.name)
+            else:
+                if edge.start_node.name == node_name:
+                    result.add(edge.end_node.name)
+                elif edge.end_node.name == node_name:
+                    result.add(edge.start_node.name)
+
+        return result
+    
+    def get_node_neighbors(self, node_name: str) -> set:
+        return self.get_node_ancestors(node_name) | self.get_node_successors(node_name)
+
     # MATRIXES
     def get_ready_for_matrix_operations(self):
         self.sort_nodes()
         self.sort_edges()
+        self.normalize_edges()
 
     # Matice sousednosti
     def adjacency_matrix(self) -> Matrix:
         matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
         node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
-        normalized_edges = self.get_normalized_edges()
 
-        for edge in normalized_edges:
+        for edge in self.normalized_edges:
             start = edge.start_node
             end = edge.end_node
             start_idx = node_index[start.name]
@@ -298,11 +338,10 @@ class Graph:
 
     # Matice incidencee
     def incidence_matrix(self) -> Matrix:
-        normalized_edges = self.get_normalized_edges()
-        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(normalized_edges))
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.normalized_edges))
         node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
 
-        for col, edge in enumerate(normalized_edges):
+        for col, edge in enumerate(self.normalized_edges):
             start = node_index[edge.start_node.name]
             end = node_index[edge.end_node.name]
 

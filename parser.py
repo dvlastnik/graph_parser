@@ -54,27 +54,54 @@ def load_graph(args):
 
         return graph
     
-def print_options_and_return() -> int:
-    valid_inputs = [1, 2, 3]
-    print(f'{valid_inputs[0]}. Properties')
-    print(f'{valid_inputs[1]}. Matrix')
-    print(f'{valid_inputs[2]}. Print graph')
-    
+def read_and_return_input(valid_inputs) -> int:
     option = int(input())
     if option not in valid_inputs:
         print('Not a valid option, ending script...')
         return -1
     return option
+    
+def print_options_and_return() -> int:
+    valid_inputs = [1, 2, 3, 4]
+    print(f'{valid_inputs[0]}. Properties')
+    print(f'{valid_inputs[1]}. Characteristics')
+    print(f'{valid_inputs[2]}. Matrix')
+    print(f'{valid_inputs[3]}. Print graph')
+    
+    option = read_and_return_input(valid_inputs)
+    return option
+
+def print_characteristics_options_and_return() -> int:
+    valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    print(f'{valid_inputs[0]}. Nasledniky uzlu')
+    print(f'{valid_inputs[1]}. Predchudce uzlu')
+    print(f'{valid_inputs[2]}. Sousedy uzlu')
+    print(f'{valid_inputs[3]}. Vystupni okoli uzlu')
+    print(f'{valid_inputs[4]}. Vstupni okoli uzlu')
+    print(f'{valid_inputs[5]}. Okoli uzlu')
+    print(f'{valid_inputs[6]}. Vystupni stupen uzlu')
+    print(f'{valid_inputs[7]}. Vstupni stupen uzlu')
+    print(f'{valid_inputs[8]}. Stupen uzlu')
+
+    option = read_and_return_input(valid_inputs)
+    return option
+
+def read_node_name(graph: Graph) -> str:
+    print('Pick node name:')
+    print(graph.sorted_nodes)
+    node_name = str(input()).capitalize()
+    if node_name not in graph.sorted_nodes:
+        print('Not a valid option, ending script...')
+        return -1
+    return node_name
 
 def print_matrix_options_and_return() -> int:
     valid_inputs = [1, 2]
     print(f'{valid_inputs[0]}. Adjacency matrix (Matice sousednosti)')
     print(f'{valid_inputs[1]}. Incidence matrix (Matice incidence)')
 
-    option = int(input())
-    if option not in valid_inputs:
-        print('Not a valid option, ending script...')
-        return -1
+    option = read_and_return_input(valid_inputs)
     return option
 
 def main():
@@ -85,13 +112,30 @@ def main():
         main_graph = load_graph(args)
         
         option = print_options_and_return()
+        print()
         if option == 1:
             main_graph.print_properties()
 
         elif option == 2:
+            option = print_characteristics_options_and_return()
+            main_graph.get_ready_for_characteristics()
+            node_name = read_node_name(main_graph)
+            
+            print()
+
+            if option == 1:
+                print(main_graph.get_node_successors(node_name))
+
+            elif option == 2:
+                print(main_graph.get_node_ancestors(node_name))
+
+            elif option == 3:
+                print(main_graph.get_node_neighbors(node_name))
+
+        elif option == 3:
             main_graph.get_ready_for_matrix_operations()
             option = print_matrix_options_and_return()
-
+            print()
             if option == 1:
                 main_graph.print_adjacency_matrix()
 
@@ -101,7 +145,7 @@ def main():
             elif option == -1:
                 pass
 
-        elif option == 3:
+        elif option == 4:
             main_graph.print_graph()
 
         elif option == -1:
