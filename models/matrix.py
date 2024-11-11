@@ -30,15 +30,13 @@ class Matrix:
         
         return result
     
-    def multiply_self_on_n(self, n) -> 'Matrix':
+    def multiply_self_on_n(self, n: int) -> 'Matrix':
         if n < 2:
             return self
 
         result = self
 
         for _ in range(n - 1):
-            result.print_matrix()
-            print()
             result = result.multiply(self)
 
         return result

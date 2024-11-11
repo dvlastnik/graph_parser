@@ -418,8 +418,6 @@ class Graph:
         matrix = self.adjacency_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
 
-        return matrix
-
     # Matice incidencee
     def incidence_matrix(self) -> Matrix:
         matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.normalized_edges))
@@ -444,3 +442,28 @@ class Graph:
     def print_incidence_matrix(self):
         matrix = self.incidence_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.get_edge_names())
+
+    # TRACE
+    def trace_matrix(self, power: int) -> Matrix:
+        matrix = self.adjacency_matrix()
+        matrix = matrix.multiply_self_on_n(power)
+
+        return matrix
+    
+    def print_trace_matrix(self, power: int):
+        matrix = self.trace_matrix(power)
+        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+
+    def get_specific_trace(self, power: int, node_1: str, node_2: str):
+        matrix = self.trace_matrix(power)
+
+        node_1_index = 0
+        node_2_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node_1:
+                node_1_index = i
+            if node == node_2:
+                node_2_index = i
+
+        return matrix.get_value(node_1_index, node_2_index)

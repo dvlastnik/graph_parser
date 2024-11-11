@@ -62,11 +62,12 @@ def read_and_return_input(valid_inputs) -> int:
     return option
     
 def print_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4]
+    valid_inputs = [1, 2, 3, 4, 5]
     print(f'{valid_inputs[0]}. Properties')
     print(f'{valid_inputs[1]}. Characteristics')
     print(f'{valid_inputs[2]}. Matrix')
-    print(f'{valid_inputs[3]}. Print graph')
+    print(f'{valid_inputs[3]}. Trace')
+    print(f'{valid_inputs[4]}. Print graph')
     
     option = read_and_return_input(valid_inputs)
     return option
@@ -104,6 +105,18 @@ def print_matrix_options_and_return() -> int:
     option = read_and_return_input(valid_inputs)
     return option
 
+def print_trace_options_and_return() -> int:
+    valid_inputs = [1, 2]
+    print(f'{valid_inputs[0]}. Trace matrix (sled matice)')
+    print(f'{valid_inputs[1]}. Specific node trace (sled uzlu)')
+
+    option = read_and_return_input(valid_inputs)
+    return option
+
+def read_and_return_power() -> int:
+    print('Enter power (n)')
+    return int(input())
+
 def main():
     args = parse_args()
     main_graph = Graph()
@@ -113,14 +126,16 @@ def main():
         
         option = print_options_and_return()
         print()
+
+        # PROPERTIES
         if option == 1:
             main_graph.print_properties()
-
+        
+        # CHARACTERISTICS
         elif option == 2:
             option = print_characteristics_options_and_return()
             main_graph.get_ready_for_characteristics()
             node_name = read_node_name(main_graph)
-            
             print()
 
             if option == 1:
@@ -150,6 +165,7 @@ def main():
             elif option == 9:
                 print(main_graph.get_node_stage(node_name))
 
+        # MATRIX
         elif option == 3:
             main_graph.get_ready_for_matrix_operations()
             option = print_matrix_options_and_return()
@@ -162,8 +178,31 @@ def main():
             
             elif option == -1:
                 pass
-
+        
+        # TRACE
         elif option == 4:
+            main_graph.get_ready_for_matrix_operations()
+            option = print_trace_options_and_return()
+            print()
+            
+            # Trace matrix
+            if option == 1:
+                power = read_and_return_power()
+                print()
+                main_graph.print_trace_matrix(power)
+
+            # Specific trace
+            elif option == 2:
+                power = read_and_return_power()
+                print('From:')
+                node_1 = read_node_name(main_graph)
+                print('To:')
+                node_2 = read_node_name(main_graph)
+
+                print(main_graph.get_specific_trace(power, node_1, node_2))
+        
+        # PRINT WHOLE GRAPH
+        elif option == 5:
             main_graph.print_graph()
 
         elif option == -1:
