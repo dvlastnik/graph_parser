@@ -273,7 +273,7 @@ class Graph:
         self.sort_edges()
         self.normalize_edges()
 
-    def get_node_successors(self, node_name: str) -> set:
+    def get_node_successors(self, node_name: str) -> list:
         result = set()
 
         for edge in self.normalized_edges:
@@ -305,6 +305,90 @@ class Graph:
     
     def get_node_neighbors(self, node_name: str) -> set:
         return self.get_node_ancestors(node_name) | self.get_node_successors(node_name)
+    
+    def get_node_output_neighborhood(self, node_name: str) -> set:
+        result = set()
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.start_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+            else:
+                if edge.start_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+                elif edge.end_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+
+        return result
+
+    def get_node_input_neighborhood(self, node_name: str) -> set:
+        result = set()
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.end_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+            else:
+                if edge.start_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+                elif edge.end_node.name == node_name:
+                    if edge.name is not None:
+                        result.add(edge.name)
+                    else:
+                        result.add(edge.weight)
+
+        return result
+
+    def get_node_neighborhood(self, node_name: str) -> set:
+        return self.get_node_output_neighborhood(node_name) | self.get_node_input_neighborhood(node_name)
+
+    def get_node_output_stage(self, node_name: str) -> int:
+        result = 0
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.start_node.name == node_name:
+                    result += 1
+            else:
+                if edge.start_node.name == node_name:
+                    result += 1
+                elif edge.end_node.name == node_name:
+                    result += 1
+
+        return result
+
+    def get_node_input_stage(self, node_name: str) -> int:
+        result = 0
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.end_node.name == node_name:
+                    result += 1
+            else:
+                if edge.start_node.name == node_name:
+                    result += 1
+                elif edge.end_node.name == node_name:
+                    result += 1
+
+        return result
+
+    def get_node_stage(self, node_name: str) -> int:
+        return self.get_node_output_stage(node_name) + self.get_node_input_stage(node_name)
 
     # MATRIXES
     def get_ready_for_matrix_operations(self):

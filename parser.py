@@ -124,13 +124,31 @@ def main():
             print()
 
             if option == 1:
-                print(main_graph.get_node_successors(node_name))
+                print(sorted(main_graph.get_node_successors(node_name)))
 
             elif option == 2:
-                print(main_graph.get_node_ancestors(node_name))
+                print(sorted(main_graph.get_node_ancestors(node_name)))
 
             elif option == 3:
-                print(main_graph.get_node_neighbors(node_name))
+                print(sorted(main_graph.get_node_neighbors(node_name)))
+
+            elif option == 4:
+                print(sorted(main_graph.get_node_output_neighborhood(node_name), key=lambda x: int(x[1:])))
+
+            elif option == 5:
+                print(sorted(main_graph.get_node_input_neighborhood(node_name), key=lambda x: int(x[1:])))
+
+            elif option == 6:
+                print(sorted(main_graph.get_node_neighborhood(node_name), key=lambda x: int(x[1:])))
+
+            elif option == 7:
+                print(main_graph.get_node_output_stage(node_name))
+
+            elif option == 8:
+                print(main_graph.get_node_input_stage(node_name))
+
+            elif option == 9:
+                print(main_graph.get_node_stage(node_name))
 
         elif option == 3:
             main_graph.get_ready_for_matrix_operations()
