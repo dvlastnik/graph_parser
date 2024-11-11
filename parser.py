@@ -63,11 +63,11 @@ def read_and_return_input(valid_inputs) -> int:
     
 def print_options_and_return() -> int:
     valid_inputs = [1, 2, 3, 4, 5]
-    print(f'{valid_inputs[0]}. Properties')
-    print(f'{valid_inputs[1]}. Characteristics')
-    print(f'{valid_inputs[2]}. Matrix')
-    print(f'{valid_inputs[3]}. Trace')
-    print(f'{valid_inputs[4]}. Print graph')
+    print('{}. Properties'.format(valid_inputs[0]))
+    print('{}. Characteristics'.format(valid_inputs[1]))
+    print('{}. Matrix'.format(valid_inputs[2]))
+    print('{}. Trace'.format(valid_inputs[3]))
+    print('{}. Print graph'.format(valid_inputs[4]))
     
     option = read_and_return_input(valid_inputs)
     return option
@@ -75,15 +75,15 @@ def print_options_and_return() -> int:
 def print_characteristics_options_and_return() -> int:
     valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    print(f'{valid_inputs[0]}. Nasledniky uzlu')
-    print(f'{valid_inputs[1]}. Predchudce uzlu')
-    print(f'{valid_inputs[2]}. Sousedy uzlu')
-    print(f'{valid_inputs[3]}. Vystupni okoli uzlu')
-    print(f'{valid_inputs[4]}. Vstupni okoli uzlu')
-    print(f'{valid_inputs[5]}. Okoli uzlu')
-    print(f'{valid_inputs[6]}. Vystupni stupen uzlu')
-    print(f'{valid_inputs[7]}. Vstupni stupen uzlu')
-    print(f'{valid_inputs[8]}. Stupen uzlu')
+    print('{}. Nasledniky uzlu'.format(valid_inputs[0]))
+    print('{}. Predchudce uzlu'.format(valid_inputs[1]))
+    print('{}. Sousedy uzlu'.format(valid_inputs[2]))
+    print('{}. Vystupni okoli uzlu'.format(valid_inputs[3]))
+    print('{}. Vstupni okoli uzlu'.format(valid_inputs[4]))
+    print('{}. Okoli uzlu'.format(valid_inputs[5]))
+    print('{}. Vystupni stupen uzlu'.format(valid_inputs[6]))
+    print('{}. Vstupni stupen uzlu'.format(valid_inputs[7]))
+    print('{}. Stupen uzlu'.format(valid_inputs[8]))
 
     option = read_and_return_input(valid_inputs)
     return option
@@ -99,16 +99,16 @@ def read_node_name(graph: Graph) -> str:
 
 def print_matrix_options_and_return() -> int:
     valid_inputs = [1, 2]
-    print(f'{valid_inputs[0]}. Adjacency matrix (Matice sousednosti)')
-    print(f'{valid_inputs[1]}. Incidence matrix (Matice incidence)')
+    print('{}. Adjacency matrix (Matice sousednosti)'.format(valid_inputs[0]))
+    print('{}. Incidence matrix (Matice incidence)'.format(valid_inputs[1]))
 
     option = read_and_return_input(valid_inputs)
     return option
 
 def print_trace_options_and_return() -> int:
     valid_inputs = [1, 2]
-    print(f'{valid_inputs[0]}. Trace matrix (sled matice)')
-    print(f'{valid_inputs[1]}. Specific node trace (sled uzlu)')
+    print('{}. Trace matrix (sled matice)'.format(valid_inputs[0]))
+    print('{}. Specific node trace (sled uzlu)'.format(valid_inputs[1]))
 
     option = read_and_return_input(valid_inputs)
     return option

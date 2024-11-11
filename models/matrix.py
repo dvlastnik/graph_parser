@@ -59,5 +59,5 @@ class Matrix:
                     row_str += ' ' * (len(col_headers[j]) - 1)
 
             row_name = row_headers[i] if row_headers else str(i)
-            print(f"{row_name} {row_str}")
+            print('{} {}'.format(row_name, row_str))
         print()
