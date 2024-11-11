@@ -209,7 +209,7 @@ def main():
             pass
 
     except FileNotFoundError:
-        print(f'Error: Input file with name {args.input} does not exist.')
+        print('Error: Input file with name {} does not exist.'.format(args.input))
     except ValueError as e:
         print('Error:', e)
 
