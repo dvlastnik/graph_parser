@@ -16,5 +16,5 @@ class Node:
 
     def to_string(self):
         if self.weight == 0:
-            return f'({self.name})'
-        return f'({self.name}, {self.weight})'
+            return '({})'.format(self.name)
+        return '({}, {})'.format(self.name, self.weight)

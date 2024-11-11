@@ -38,24 +38,24 @@ class Edge:
         return int(result.group()) if result else float('inf')
 
     def to_string(self):
-        result = f'{self.start_node.to_string()}'
+        result = '{}'.format(self.start_node.to_string())
 
         if self.direction == EdgeDirection.REVERSE:
-            result += f'{self.direction.value}-'
+            result += '{}-'.format(self.direction.value)
         else:
             result += '--'
 
         if self.weight == 0:
-            result += f'--'
+            result += '--'
         else:
-            result += f'{self.name}({self.weight})'
+            result += '{}({})'.format(self.name, self.weight)
 
         if self.direction == EdgeDirection.FORWARD:
-            result += f'-{self.direction.value}'
+            result += '-{}'.format(self.direction.value)
         else:
             result += '--'
 
-        result += f'{self.end_node.to_string()}'
+        result += '{}'.format(self.end_node.to_string())
 
         return result
         

@@ -25,7 +25,7 @@ def load_graph(args):
 
             if 'u' in line[0]:
                 if len(line) < 1:
-                    raise ValueError(f'Line does not contain any node info: {line}')
+                    raise ValueError('Line does not contain any node info: {}'.format(line))
                 
                 node = Node(line[1])
 
@@ -37,7 +37,7 @@ def load_graph(args):
 
             if 'h' in line[0]:
                 if len(line) < 1:
-                    raise ValueError(f'Line does not contain necessary edge info: {line}')
+                    raise ValueError('Line does not contain necessary edge info: {}'.format(line))
                 
                 edge = Edge(start_node=Node(line[1]), direction=EdgeDirection.from_string(line[2]), end_node=Node(line[3]))
 
