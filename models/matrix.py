@@ -52,13 +52,13 @@ class Matrix:
             print(' ', ' '.join(col_headers))
         for i, row in enumerate(self.matrix):
             row_str = ''
-
-            for r in row:
+ 
+            for j, r in enumerate(row):
                 row_str += str(r)
                 if r >= 0:
-                    row_str += ' ' * len(col_headers[0])
+                    row_str += ' ' * len(col_headers[j])
                 elif r < 0:
-                    row_str += ' ' * (len(col_headers[0]) - 1)
+                    row_str += ' ' * (len(col_headers[j]) - 1)
 
             row_name = row_headers[i] if row_headers else str(i)
             print(f"{row_name} {row_str}")
