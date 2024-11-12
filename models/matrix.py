@@ -1,5 +1,3 @@
-from typing import List
-
 class Matrix:
     def __init__(self, rows: int, cols: int):
         self.rows = rows
@@ -45,7 +43,7 @@ class Matrix:
         for row in self.matrix:
             print(row)
 
-    # type: (List[str], List[str])
+    # type: (list[str], list[str])
     def print_matrix_with_headers(self, row_headers=None, col_headers=None):
         if col_headers:
             print(' ', ' '.join(col_headers))

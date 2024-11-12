@@ -1,4 +1,3 @@
-from typing import Set, List
 from collections import deque
 from itertools import combinations
 
@@ -8,13 +7,13 @@ from models.edge import Edge, EdgeDirection
 
 class Graph:
     def __init__(self):
-        self.nodes = set()  # type: Set[Node]
-        self.edges = []  # type: List[Edge]
+        self.nodes = set()  # type: set[Node]
+        self.edges = []  # type: list[Edge]
 
         self.edges_set = set()
-        self.sorted_nodes = []  # type: List[str]
+        self.sorted_nodes = []  # type: list[str]
         self.nodes_map = {}
-        self.normalized_edges = []  # type: List[Edge]
+        self.normalized_edges = []  # type: list[Edge]
 
         self.weighted = False
         self.directed = False
