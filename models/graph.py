@@ -14,6 +14,7 @@ class Graph:
         self.sorted_nodes = []  # type: list[str]
         self.nodes_map = {}
         self.normalized_edges = []  # type: list[Edge]
+        self.edge_names = []
 
         self.weighted = False
         self.directed = False
@@ -45,6 +46,9 @@ class Graph:
 
     def sort_edges(self):
         self.edges.sort(key=Edge.extract_number_from_name)
+        
+        for edge in self.edges:
+            self.edge_names.append(edge.name)
 
     def normalize_edges(self):
         for edge in self.edges:
@@ -391,6 +395,17 @@ class Graph:
 
     def get_node_stage(self, node_name: str) -> int:
         return self.get_node_output_stage(node_name) + self.get_node_input_stage(node_name)
+    
+    def print_characteristics(self, node_name: str):
+        print('Ug+({}), nasledniky uzlu: {}'.format(node_name, sorted(self.get_node_successors(node_name))))
+        print('Ug-({}), predchudce uzlu: {}'.format(node_name, sorted(self.get_node_ancestors(node_name))))
+        print('Ug({}), sousedy uzlu: {}'.format(node_name, sorted(self.get_node_neighbors(node_name))))
+        print('Hg+({}), vystupni okoli uzlu: {}'.format(node_name, sorted(self.get_node_output_neighborhood(node_name), key=lambda x: int(x[1:]))))
+        print('Hg-({}), vstupni okoli uzlu: {}'.format(node_name, sorted(self.get_node_input_neighborhood(node_name), key=lambda x: int(x[1:]))))
+        print('Hg({}), okoli uzlu: {}'.format(node_name, sorted(self.get_node_neighborhood(node_name), key=lambda x: int(x[1:]))))
+        print('dg+({}), vystupni stupen uzlu: {}'.format(node_name, self.get_node_output_stage(node_name)))
+        print('dg-({}), vstupni stupen uzlu: {}'.format(node_name, self.get_node_input_stage(node_name)))
+        print('dg({}), stupen uzlu: {}'.format(node_name, self.get_node_stage(node_name)))
 
     # MATRIXES
     def get_ready_for_matrix_operations(self):
@@ -415,6 +430,20 @@ class Graph:
                 matrix.increment_value(end_idx, start_idx)
 
         return matrix
+    
+    def get_specific_adj_point(self, node_1: str, node_2: str) -> str:
+        matrix = self.adjacency_matrix()
+
+        node_1_index = 0
+        node_2_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node_1:
+                node_1_index = i
+            if node == node_2:
+                node_2_index = i
+
+        return matrix.get_value(node_1_index, node_2_index)
     
     def print_adjacency_matrix(self):
         matrix = self.adjacency_matrix()
@@ -444,6 +473,24 @@ class Graph:
     def print_incidence_matrix(self):
         matrix = self.incidence_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.get_edge_names())
+
+    def get_specific_incidence_point(self, node: str, edge: str) -> str:
+        matrix = self.incidence_matrix()
+
+        node_index = 0
+        edge_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node:
+                node_index = i
+                break
+
+        for i, edge_name in enumerate(self.edge_names):
+            if edge_name == edge:
+                edge_index = i
+                break
+
+        return matrix.get_value(node_index, edge_index)
 
     # TRACE
     def trace_matrix(self, power: int) -> Matrix:

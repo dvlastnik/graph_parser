@@ -72,22 +72,6 @@ def print_options_and_return() -> int:
     option = read_and_return_input(valid_inputs)
     return option
 
-def print_characteristics_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    print('{}. Nasledniky uzlu'.format(valid_inputs[0]))
-    print('{}. Predchudce uzlu'.format(valid_inputs[1]))
-    print('{}. Sousedy uzlu'.format(valid_inputs[2]))
-    print('{}. Vystupni okoli uzlu'.format(valid_inputs[3]))
-    print('{}. Vstupni okoli uzlu'.format(valid_inputs[4]))
-    print('{}. Okoli uzlu'.format(valid_inputs[5]))
-    print('{}. Vystupni stupen uzlu'.format(valid_inputs[6]))
-    print('{}. Vstupni stupen uzlu'.format(valid_inputs[7]))
-    print('{}. Stupen uzlu'.format(valid_inputs[8]))
-
-    option = read_and_return_input(valid_inputs)
-    return option
-
 def read_node_name(graph: Graph) -> str:
     print('Pick node name:')
     print(graph.sorted_nodes)
@@ -97,10 +81,27 @@ def read_node_name(graph: Graph) -> str:
         return -1
     return node_name
 
+def read_edge_name(graph: Graph) -> str:
+    print('Pick edge name:')
+    print(graph.edge_names)
+    edge_name = str(input())
+    if edge_name not in graph.edge_names:
+        print('Not a valid option, ending script...')
+        return -1
+    return edge_name
+
 def print_matrix_options_and_return() -> int:
     valid_inputs = [1, 2]
     print('{}. Adjacency matrix (Matice sousednosti)'.format(valid_inputs[0]))
     print('{}. Incidence matrix (Matice incidence)'.format(valid_inputs[1]))
+
+    option = read_and_return_input(valid_inputs)
+    return option
+
+def print_matrix_operations_and_return() -> int:
+    valid_inputs = [1, 2]
+    print('{}. Get specific value'.format(valid_inputs[0]))
+    print('{}. Print full matrix'.format(valid_inputs[1]))
 
     option = read_and_return_input(valid_inputs)
     return option
@@ -133,37 +134,11 @@ def main():
         
         # CHARACTERISTICS
         elif option == 2:
-            option = print_characteristics_options_and_return()
             main_graph.get_ready_for_characteristics()
             node_name = read_node_name(main_graph)
             print()
 
-            if option == 1:
-                print(sorted(main_graph.get_node_successors(node_name)))
-
-            elif option == 2:
-                print(sorted(main_graph.get_node_ancestors(node_name)))
-
-            elif option == 3:
-                print(sorted(main_graph.get_node_neighbors(node_name)))
-
-            elif option == 4:
-                print(sorted(main_graph.get_node_output_neighborhood(node_name), key=lambda x: int(x[1:])))
-
-            elif option == 5:
-                print(sorted(main_graph.get_node_input_neighborhood(node_name), key=lambda x: int(x[1:])))
-
-            elif option == 6:
-                print(sorted(main_graph.get_node_neighborhood(node_name), key=lambda x: int(x[1:])))
-
-            elif option == 7:
-                print(main_graph.get_node_output_stage(node_name))
-
-            elif option == 8:
-                print(main_graph.get_node_input_stage(node_name))
-
-            elif option == 9:
-                print(main_graph.get_node_stage(node_name))
+            main_graph.print_characteristics(node_name)
 
         # MATRIX
         elif option == 3:
@@ -171,10 +146,38 @@ def main():
             option = print_matrix_options_and_return()
             print()
             if option == 1:
-                main_graph.print_adjacency_matrix()
+                option = print_matrix_operations_and_return()
+                print()
+
+                if option == 1:
+                    print('Enter node 1:')
+                    node_1 = read_node_name(main_graph)
+                    print('Enter node 2:')
+                    node_2 = read_node_name(main_graph)
+                    print(main_graph.get_specific_adj_point(node_1, node_2))
+
+                elif option == 2:
+                    main_graph.print_adjacency_matrix()
+
+                elif option == -1:
+                    pass
 
             elif option == 2:
-                main_graph.print_incidence_matrix()
+                option = print_matrix_operations_and_return()
+                print()
+
+                if option == 1:
+                    print('Enter node:')
+                    node = read_node_name(main_graph)
+                    print('Enter edge:')
+                    edge = read_edge_name(main_graph)
+                    print(main_graph.get_specific_incidence_point(node, edge))
+
+                elif option == 2:
+                    main_graph.print_incidence_matrix()
+
+                elif option == -1:
+                    pass
             
             elif option == -1:
                 pass
