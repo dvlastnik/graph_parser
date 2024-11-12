@@ -8,13 +8,13 @@ from models.edge import Edge, EdgeDirection
 
 class Graph:
     def __init__(self):
-        self.nodes: Set[Node] = set()
-        self.edges: List[Edge] = []
+        self.nodes = set()  # type: Set[Node]
+        self.edges = []  # type: List[Edge]
 
         self.edges_set = set()
-        self.sorted_nodes: List[str] = []
+        self.sorted_nodes = []  # type: List[str]
         self.nodes_map = {}
-        self.normalized_edges: List[Edge] = []
+        self.normalized_edges = []  # type: List[Edge]
 
         self.weighted = False
         self.directed = False

@@ -45,7 +45,8 @@ class Matrix:
         for row in self.matrix:
             print(row)
 
-    def print_matrix_with_headers(self, row_headers: List[str] = None, col_headers: List[str] = None):
+    # type: (List[str], List[str])
+    def print_matrix_with_headers(self, row_headers=None, col_headers=None):
         if col_headers:
             print(' ', ' '.join(col_headers))
         for i, row in enumerate(self.matrix):
