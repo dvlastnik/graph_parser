@@ -29,9 +29,6 @@ class Graph:
         self.nodes_map[edge.start_node.name] += 1
         self.nodes_map[edge.end_node.name] += 1
 
-        if edge.weight > 1:
-            self.weighted = True
-
         if edge.direction == EdgeDirection.BOTH:
             self.directed = False
         else:
@@ -117,11 +114,6 @@ class Graph:
             else:
                 self.directed = True
                 node_pair = (edge.start_node, edge.end_node)
-
-            if edge.weight > 1:
-                self.weighted = True
-
-            print(node_pair[0].to_string(), node_pair[1].to_string())
             
             if node_pair in self.edges_set:
                 self.simple = False
