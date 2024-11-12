@@ -125,6 +125,7 @@ class Graph:
                 self.simple = False
             else:
                 self.edges_set.add(node_pair)
+
         return self.simple
     
     # Jednoduchy
@@ -138,7 +139,7 @@ class Graph:
 
     # Multigraf
     def is_multi(self) -> bool:
-        return not self.is_simple()
+        return not self.simple
 
     # Orientovany
     def is_directed(self) -> bool:
@@ -253,12 +254,12 @@ class Graph:
             print('Orientovany (directed)')
         if self.is_empty():
             print('Prazdny (empty)')
-        if self.is_discrate():
-            print('Diskretni (discrate)')
         if self.is_simple():
             print('Prosty (simple)')
         if self.is_easy():
             print('Jednoduchy (easy)')
+        if self.is_discrate():
+            print('Diskretni (discrate)')
         if self.is_multi():
             print('Multigraf (multigraph)')
         if self.is_complete():
