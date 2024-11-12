@@ -8,7 +8,7 @@ h B > C 5 :h3;
 u G;
 h B > G 8 :h4;
 u J;
-h J < G 9 :h5;
+h J < B 9 :h5;
 h C > G 2 :h6;
 h G > J 11 :h7;
 u F;
