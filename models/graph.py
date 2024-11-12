@@ -32,22 +32,13 @@ class Graph:
         if edge.weight > 1:
             self.weighted = True
 
-        node_pair = None
         if edge.direction == EdgeDirection.BOTH:
             self.directed = False
-            node_pair = frozenset([edge.start_node, edge.end_node])
         else:
             self.directed = True
-            node_pair = (edge.start_node, edge.end_node)
 
         if edge.weight > 1:
             self.weighted = True
-        
-        if node_pair in self.edges_set:
-            self.simple = False
-        else:
-            self.edges_set.add(node_pair)
-            self.simple = True
 
     def sort_nodes(self):
         for node in self.nodes:
@@ -116,7 +107,24 @@ class Graph:
 
     # Prosty
     def is_simple(self) -> bool:
-        # TODO: Check that if is directed with A > B and A < B
+        self.normalize_edges()
+        node_pair = None
+
+        for edge in self.normalized_edges:
+            if edge.direction == EdgeDirection.BOTH:
+                self.directed = False
+                node_pair = frozenset([edge.start_node, edge.end_node])
+            else:
+                self.directed = True
+                node_pair = (edge.start_node, edge.end_node)
+
+            if edge.weight > 1:
+                self.weighted = True
+            
+            if node_pair in self.edges_set:
+                self.simple = False
+            else:
+                self.edges_set.add(node_pair)
         return self.simple
     
     # Jednoduchy
