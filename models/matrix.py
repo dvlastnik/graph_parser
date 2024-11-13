@@ -13,6 +13,25 @@ class Matrix:
     def increment_value(self, row: int, col: int):
         self.matrix[row][col] += 1
 
+    def get_number_of_x(self, num: int):
+        result = 0
+
+        for row in self.matrix:
+            for col in row:
+                if col == num:
+                    result += 1
+
+        return result
+
+    def get_number_of_x_on_diag(self, num: int) -> int:
+        result = 0
+
+        for i, row in enumerate(self.matrix):
+            if self.matrix[i][i] == num:
+                result += 1
+        
+        return result
+
     def multiply(self, other: 'Matrix') -> 'Matrix':
         if self.cols != other.rows:
             raise ValueError("Number of columns in the first matrix must equal the number of rows in the second matrix.")

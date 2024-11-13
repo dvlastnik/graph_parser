@@ -38,6 +38,12 @@ class Graph:
         if edge.weight > 1:
             self.weighted = True
 
+    def get_number_of_nodes(self) -> int:
+        return len(self.nodes)
+    
+    def get_number_of_edges(self) -> int:
+        return len(self.edges)
+
     def sort_nodes(self):
         for node in self.nodes:
             self.sorted_nodes.append(node.name)
@@ -60,31 +66,6 @@ class Graph:
     
     def get_edge_names(self):
         return [edge.name for edge in self.normalized_edges]
-
-    def contains_k5(self):
-        if len(self.nodes) < 5:
-            return False
-        
-        for comb in combinations(self.nodes, 5):
-            subgraph_edges = [(u, v) for u, v in combinations(comb, 2)]
-            if all(edge in self.edges or (edge[1], edge[0]) in self.edges for edge in subgraph_edges):
-                return True
-        return False
-
-    def contains_k33(self):
-        if len(self.nodes) < 6:
-            return False
-        
-        for left_part in combinations(self.nodes, 3):
-            right_part = self.nodes - set(left_part)
-            if len(right_part) < 3:
-                continue
-            right_part = list(right_part)[:3]
-            
-            subgraph_edges = [(u, v) for u in left_part for v in right_part]
-            if all(edge in self.edges or (edge[1], edge[0]) in self.edges for edge in subgraph_edges):
-                return True
-        return False
 
     def print_graph(self):
         for edge in self.edges:
@@ -227,10 +208,6 @@ class Graph:
 
         return len(visited_nodes) == len(self.nodes)
 
-    # Rovinny
-    def is_planar(self):
-        return not (self.contains_k5() or self.contains_k33())
-
     # Konecny
     def is_finite(self):
         return len(self.nodes) < float('inf') and len(self.edges) < float('inf')
@@ -266,8 +243,6 @@ class Graph:
             print('Bipartitni (bipartite)')
         if self.is_connected():
             print('Souvisly (connected)')
-        if self.is_planar():
-            print('Rovinny (planar)')
         if self.is_finite():
             print('Konecny (finite)')
         if self.is_regular():

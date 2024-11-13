@@ -1,6 +1,7 @@
 import argparse
 
 from models.graph import Graph
+from models.matrix import Matrix
 from models.node import Node
 from models.edge import Edge, EdgeDirection
 
@@ -99,9 +100,10 @@ def print_matrix_options_and_return() -> int:
     return option
 
 def print_matrix_operations_and_return() -> int:
-    valid_inputs = [1, 2]
+    valid_inputs = [1, 2, 3]
     print('{}. Get specific value'.format(valid_inputs[0]))
-    print('{}. Print full matrix'.format(valid_inputs[1]))
+    print('{}. Get num of x'.format(valid_inputs[1]))
+    print('{}. Print full matrix'.format(valid_inputs[2]))
 
     option = read_and_return_input(valid_inputs)
     return option
@@ -118,13 +120,20 @@ def read_and_return_power() -> int:
     print('Enter power (n)')
     return int(input())
 
+def number_of_x_in_matrix(matrix: Matrix):
+    print('Number of what?')
+    num = int(input())
+    print('Whole matrix: {}'.format(matrix.get_number_of_x(num)))
+    print('Diag: {}'.format(matrix.get_number_of_x_on_diag(num)))
+
 def main():
     args = parse_args()
     main_graph = Graph()
 
     try:
         main_graph = load_graph(args)
-        
+        print('Num of nodes: {}'.format(main_graph.get_number_of_nodes()))
+        print('Num of edges: {}'.format(main_graph.get_number_of_edges()))
         option = print_options_and_return()
         print()
 
@@ -157,6 +166,9 @@ def main():
                     print(main_graph.get_specific_adj_point(node_1, node_2))
 
                 elif option == 2:
+                    number_of_x_in_matrix(main_graph.adjacency_matrix())
+
+                elif option == 3:
                     main_graph.print_adjacency_matrix()
 
                 elif option == -1:
@@ -174,6 +186,9 @@ def main():
                     print(main_graph.get_specific_incidence_point(node, edge))
 
                 elif option == 2:
+                    number_of_x_in_matrix(main_graph.incidence_matrix())
+
+                elif option == 3:
                     main_graph.print_incidence_matrix()
 
                 elif option == -1:
