@@ -60,3 +60,21 @@ class Matrix:
             row_name = row_headers[i] if row_headers else str(i)
             print('{} {}'.format(row_name, row_str))
         print()
+
+    def save_matrix_with_headers(self, filename, row_headers=None, col_headers=None):
+        with open(filename, 'w') as file:
+            if col_headers:
+                file.write('  ' + ' '.join(col_headers) + '\n')
+            
+            for i, row in enumerate(self.matrix):
+                row_str = ''
+                
+                for j, r in enumerate(row):
+                    row_str += str(r)
+                    if r >= 0:
+                        row_str += ' ' * len(col_headers[j])
+                    elif r < 0:
+                        row_str += ' ' * (len(col_headers[j]) - 1)
+                
+                row_name = row_headers[i] if row_headers else str(i)
+                file.write('{} {}\n'.format(row_name, row_str))

@@ -448,6 +448,7 @@ class Graph:
     def print_adjacency_matrix(self):
         matrix = self.adjacency_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+        matrix.save_matrix_with_headers('adjacency_matrix.txt', self.sorted_nodes, self.sorted_nodes)
 
     # Matice incidencee
     def incidence_matrix(self) -> Matrix:
@@ -473,6 +474,7 @@ class Graph:
     def print_incidence_matrix(self):
         matrix = self.incidence_matrix()
         matrix.print_matrix_with_headers(self.sorted_nodes, self.get_edge_names())
+        matrix.save_matrix_with_headers('incidence_matrix.txt', self.sorted_nodes, self.get_edge_names())
 
     def get_specific_incidence_point(self, node: str, edge: str) -> str:
         matrix = self.incidence_matrix()
@@ -502,6 +504,7 @@ class Graph:
     def print_trace_matrix(self, power: int):
         matrix = self.trace_matrix(power)
         matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+        matrix.save_matrix_with_headers('trace_matrix.txt', self.sorted_nodes, self.sorted_nodes)
 
     def get_specific_trace(self, power: int, node_1: str, node_2: str):
         matrix = self.trace_matrix(power)
