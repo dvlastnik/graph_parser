@@ -483,7 +483,7 @@ class Graph:
             matrix.set_value(start_idx, end_idx, edge.weight)
 
             if not self.directed:
-                matrix.increment_value(end_idx, start_idx, edge.weight)
+                matrix.set_value(end_idx, start_idx, edge.weight)
 
         for i, rows in enumerate(matrix.matrix):
             for j, col in enumerate(rows):
@@ -510,6 +510,8 @@ class Graph:
                 node_2_index = i
 
         return matrix.get_value(node_1_index, node_2_index)
+    
+    # Matice predchudcu
 
     # TRACE
     def trace_matrix(self, power: int) -> Matrix:
