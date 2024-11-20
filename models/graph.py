@@ -526,7 +526,7 @@ class Graph:
             matrix.set_value(start_idx, end_idx, start.name)
 
             if not self.directed:
-                matrix.set_value(end_idx, start_idx, start.name)
+                matrix.set_value(end_idx, start_idx, end.name)
 
         return matrix
 
