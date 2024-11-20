@@ -13,6 +13,11 @@ class Matrix:
     def increment_value(self, row: int, col: int):
         self.matrix[row][col] += 1
 
+    def fill_matrix(self, value):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.matrix[i][j] = value
+
     def get_number_of_x(self, num: int):
         result = 0
 

@@ -512,6 +512,42 @@ class Graph:
         return matrix.get_value(node_1_index, node_2_index)
     
     # Matice predchudcu
+    def predecessor_matrix(self) -> Matrix:
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
+        matrix.fill_matrix('-')
+        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
+
+        for edge in self.normalized_edges:
+            start = edge.start_node
+            end = edge.end_node
+            start_idx = node_index[start.name]
+            end_idx = node_index[end.name]
+
+            matrix.set_value(start_idx, end_idx, start.name)
+
+            if not self.directed:
+                matrix.set_value(end_idx, start_idx, start.name)
+
+        return matrix
+
+    def print_predecessor_matrix(self):
+        matrix = self.predecessor_matrix()
+        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+        matrix.save_matrix_with_headers('predecessor_matrix.txt', self.sorted_nodes, self.sorted_nodes)
+
+    def get_specific_predecessor_point(self, node_1: str, node_2: str) -> str:
+        matrix = self.predecessor_matrix()
+
+        node_1_index = 0
+        node_2_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node_1:
+                node_1_index = i
+            if node == node_2:
+                node_2_index = i
+
+        return matrix.get_value(node_1_index, node_2_index)
 
     # TRACE
     def trace_matrix(self, power: int) -> Matrix:

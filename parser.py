@@ -229,7 +229,24 @@ def main():
             
             # Matice predchudcu
             elif option == 4:
-                pass
+                option = print_matrix_operations_and_return()
+                print()
+
+                if option == 1:
+                    print('Enter node 1:')
+                    node_1 = read_node_name(main_graph)
+                    print('Enter node 2:')
+                    node_2 = read_node_name(main_graph)
+                    print(main_graph.get_specific_predecessor_point(node_1, node_2))
+
+                elif option == 2:
+                    number_of_x_in_matrix(main_graph.predecessor_matrix())
+
+                elif option == 3:
+                    main_graph.print_predecessor_matrix()
+
+                elif option == -1:
+                    pass
 
             # Laplacelova matice
             elif option == 5:
