@@ -4,7 +4,7 @@ class Matrix:
         self.cols = cols
         self.matrix = [[0] * cols for _ in range(rows)]
 
-    def set_value(self, row: int, col: int, value: int):
+    def set_value(self, row: int, col: int, value):
         self.matrix[row][col] = value
 
     def get_value(self, row: int, col: int):
@@ -71,10 +71,17 @@ class Matrix:
  
             for j, r in enumerate(row):
                 row_str += str(r)
-                if r >= 0:
-                    row_str += ' ' * len(col_headers[j])
-                elif r < 0:
-                    row_str += ' ' * (len(col_headers[j]) - 1)
+
+                if isinstance(r, (int, float)):
+                    if r >= 0:
+                        row_str += ' ' * len(col_headers[j])
+                    elif r < 0:
+                        row_str += ' ' * (len(col_headers[j]) - 1)
+                else:
+                    if len(r) >= 0:
+                        row_str += ' ' * len(col_headers[j])
+                    elif len(r) < 0:
+                        row_str += ' ' * (len(col_headers[j]) - 1)
 
             row_name = row_headers[i] if row_headers else str(i)
             print('{} {}'.format(row_name, row_str))
@@ -90,10 +97,17 @@ class Matrix:
                 
                 for j, r in enumerate(row):
                     row_str += str(r)
-                    if r >= 0:
-                        row_str += ' ' * len(col_headers[j])
-                    elif r < 0:
-                        row_str += ' ' * (len(col_headers[j]) - 1)
+
+                    if isinstance(r, (int, float)):
+                        if r >= 0:
+                            row_str += ' ' * len(col_headers[j])
+                        elif r < 0:
+                            row_str += ' ' * (len(col_headers[j]) - 1)
+                    else:
+                        if len(r) >= 0:
+                            row_str += ' ' * len(col_headers[j])
+                        elif len(r) < 0:
+                            row_str += ' ' * (len(col_headers[j]) - 1)
                 
                 row_name = row_headers[i] if row_headers else str(i)
                 file.write('{} {}\n'.format(row_name, row_str))

@@ -59,7 +59,7 @@ class Graph:
     def normalize_edges(self):
         for edge in self.edges:
             if edge.direction == EdgeDirection.REVERSE:
-                normalized_edge = Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node, name=edge.name)
+                normalized_edge = Edge(start_node=edge.end_node, direction=EdgeDirection.get_opposite(edge.direction), end_node=edge.start_node, name=edge.name, weight=edge.weight)
                 self.normalized_edges.append(normalized_edge)
             else:
                 self.normalized_edges.append(edge)
@@ -468,6 +468,48 @@ class Graph:
                 break
 
         return matrix.get_value(node_index, edge_index)
+    
+    # Matice delek
+    def length_matrix(self) -> Matrix:
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
+        node_index = {node: i for i, node in enumerate(self.sorted_nodes)}
+
+        for edge in self.normalized_edges:
+            start = edge.start_node
+            end = edge.end_node
+            start_idx = node_index[start.name]
+            end_idx = node_index[end.name]
+
+            matrix.set_value(start_idx, end_idx, edge.weight)
+
+            if not self.directed:
+                matrix.increment_value(end_idx, start_idx, edge.weight)
+
+        for i, rows in enumerate(matrix.matrix):
+            for j, col in enumerate(rows):
+                if col == 0 and i != j:
+                    matrix.set_value(i, j, '∞')
+
+        return matrix
+    
+    def print_length_matrix(self):
+        matrix = self.length_matrix()
+        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+        matrix.save_matrix_with_headers('length_matrix.txt', self.sorted_nodes, self.sorted_nodes)
+
+    def get_specific_length_point(self, node_1: str, node_2: str) -> str:
+        matrix = self.length_matrix()
+
+        node_1_index = 0
+        node_2_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node_1:
+                node_1_index = i
+            if node == node_2:
+                node_2_index = i
+
+        return matrix.get_value(node_1_index, node_2_index)
 
     # TRACE
     def trace_matrix(self, power: int) -> Matrix:

@@ -92,9 +92,12 @@ def read_edge_name(graph: Graph) -> str:
     return edge_name
 
 def print_matrix_options_and_return() -> int:
-    valid_inputs = [1, 2]
+    valid_inputs = [1, 2, 3, 4, 5]
     print('{}. Adjacency matrix (Matice sousednosti)'.format(valid_inputs[0]))
     print('{}. Incidence matrix (Matice incidence)'.format(valid_inputs[1]))
+    print('{}. Length matrix (Matice delek)'.format(valid_inputs[2]))
+    print('{}. Predecessor matrix (Matice predchudcu)'.format(valid_inputs[3]))
+    print('{}. Laplace matrix (Laplacelova matice)'.format(valid_inputs[4]))
 
     option = read_and_return_input(valid_inputs)
     return option
@@ -122,7 +125,13 @@ def read_and_return_power() -> int:
 
 def number_of_x_in_matrix(matrix: Matrix):
     print('Number of what?')
-    num = int(input())
+    num = input()
+
+    try:
+        num = int(num)
+    except ValueError:
+        pass
+
     print('Whole matrix: {}'.format(matrix.get_number_of_x(num)))
     print('Diag: {}'.format(matrix.get_number_of_x_on_diag(num)))
 
@@ -154,6 +163,8 @@ def main():
             main_graph.get_ready_for_matrix_operations()
             option = print_matrix_options_and_return()
             print()
+
+            # Matice sousednosti
             if option == 1:
                 option = print_matrix_operations_and_return()
                 print()
@@ -173,7 +184,8 @@ def main():
 
                 elif option == -1:
                     pass
-
+            
+            # Matice incidence
             elif option == 2:
                 option = print_matrix_operations_and_return()
                 print()
@@ -193,6 +205,35 @@ def main():
 
                 elif option == -1:
                     pass
+            
+            # Matice delek
+            elif option == 3:
+                option = print_matrix_operations_and_return()
+                print()
+
+                if option == 1:
+                    print('Enter node 1:')
+                    node_1 = read_node_name(main_graph)
+                    print('Enter node 2:')
+                    node_2 = read_node_name(main_graph)
+                    print(main_graph.get_specific_length_point(node_1, node_2))
+
+                elif option == 2:
+                    number_of_x_in_matrix(main_graph.length_matrix())
+
+                elif option == 3:
+                    main_graph.print_length_matrix()
+
+                elif option == -1:
+                    pass
+            
+            # Matice predchudcu
+            elif option == 4:
+                pass
+
+            # Laplacelova matice
+            elif option == 5:
+                pass
             
             elif option == -1:
                 pass
