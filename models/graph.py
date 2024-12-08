@@ -574,3 +574,35 @@ class Graph:
                 node_2_index = i
 
         return matrix.get_value(node_1_index, node_2_index)
+
+    # BFS
+    def bfs(self, start_node: Node) -> list:
+        visited = set()
+        result = []
+        queue = deque([start_node])
+        visited.add(start_node)
+
+        while queue:
+            node = queue.popleft()
+            result.append(node.name)
+
+            for successor in self.get_node_successors():
+                if successor not in visited:
+                    visited.add(successor)
+                    queue.append(successor)
+
+        return result
+
+    # DFS
+    def dfs(self, start_node: Node, visited=None, result=[]):
+        if visited is None:
+            visited = set()
+
+        visited.add(start_node)
+        result.append(start_node.name)
+
+        for successor in self.get_node_successors():
+            if successor not in visited:
+                result = self.dfs(successor, visited, result)
+
+        return result
