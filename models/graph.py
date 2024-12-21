@@ -38,6 +38,13 @@ class Graph:
         if edge.weight > 1:
             self.weighted = True
 
+    def get_node_by_name(self, node_name: str) -> Node:
+        for node in self.nodes:
+            if node.name == node_name:
+                return node
+            
+        return None
+
     def get_number_of_nodes(self) -> int:
         return len(self.nodes)
     
@@ -575,18 +582,21 @@ class Graph:
 
         return matrix.get_value(node_1_index, node_2_index)
 
+    # BFS & DFS
     # BFS
-    def bfs(self, start_node: Node) -> list:
+    def bfs(self, start_node_name: str) -> list:
         visited = set()
         result = []
-        queue = deque([start_node])
-        visited.add(start_node)
+        queue = deque([start_node_name])
+        visited.add(start_node_name)
 
         while queue:
-            node = queue.popleft()
-            result.append(node.name)
+            node_name = queue.popleft()
+            #print('node name {}'.format(node_name))
+            result.append(node_name)
+            #print('result {}'.format(result))
 
-            for successor in self.get_node_successors():
+            for successor in sorted(self.get_node_successors(node_name)):
                 if successor not in visited:
                     visited.add(successor)
                     queue.append(successor)
@@ -594,15 +604,33 @@ class Graph:
         return result
 
     # DFS
-    def dfs(self, start_node: Node, visited=None, result=[]):
+    def dfs(self, start_node_name: str, visited=None, result=[], successors=None):
         if visited is None:
             visited = set()
 
-        visited.add(start_node)
-        result.append(start_node.name)
+        visited.add(start_node_name)
+        result.append(start_node_name)
 
-        for successor in self.get_node_successors():
-            if successor not in visited:
-                result = self.dfs(successor, visited, result)
+        if successors is None:
+            for successor in sorted(self.get_node_successors(start_node_name)):
+                if successor not in visited:
+                    result = self.dfs(successor, visited, result)
+        else:
+            for successor in successors:
+                if successor not in visited:
+                    result = self.dfs(successor, visited, result)
 
         return result
+    
+    def save_bfs_dfs_to_txt(self, bfs: list, dfs: list):
+        try:
+            with open('bfs.txt', 'w') as file:
+                for node_name in bfs:
+                    file.write('{} '.format(node_name))
+
+            with open('dfs.txt', 'w') as file:
+                for node_name in dfs:
+                    file.write('{} '.format(node_name))
+
+        except Exception as e:
+            print(f"Error occurred while saving the results: {e}")
