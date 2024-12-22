@@ -116,3 +116,60 @@ class Matrix:
                 
                 row_name = row_headers[i] if row_headers else str(i)
                 file.write('{} {}\n'.format(row_name, row_str))
+
+    def determinant(self) -> int:
+        if self.rows != self.cols:
+            raise ValueError("Determinant can only be computed for square matrices.")
+
+        if self.rows == 1:
+            return self.matrix[0][0]
+
+        if self.rows == 2:
+            return self.matrix[0][0] * self.matrix[1][1] - self.matrix[0][1] * self.matrix[1][0]
+
+        if self.rows == 3:
+            return (
+                self.matrix[0][0] * self.matrix[1][1] * self.matrix[2][2]
+                + self.matrix[0][1] * self.matrix[1][2] * self.matrix[2][0]
+                + self.matrix[0][2] * self.matrix[1][0] * self.matrix[2][1]
+                - self.matrix[0][2] * self.matrix[1][1] * self.matrix[2][0]
+                - self.matrix[0][0] * self.matrix[1][2] * self.matrix[2][1]
+                - self.matrix[0][1] * self.matrix[1][0] * self.matrix[2][2]
+            )
+
+        # Recursive case for larger matrices using Leibniz formula
+        det = 0
+        for col in range(self.cols):
+            # Get the submatrix excluding the first row and the current column
+            submatrix = self._get_submatrix(0, col)
+
+            # Add or subtract the submatrix determinant based on column index
+            det += ((-1) ** col) * self.matrix[0][col] * submatrix.determinant()
+
+        return det
+    
+    def _get_submatrix(self, exclude_row: int, exclude_col: int) -> 'Matrix':
+        submatrix = Matrix(self.rows - 1, self.cols - 1)
+        for i in range(self.rows):
+            if i == exclude_row:
+                continue
+            for j in range(self.cols):
+                if j == exclude_col:
+                    continue
+                new_row = i - 1 if i > exclude_row else i
+                new_col = j - 1 if j > exclude_col else j
+                submatrix.set_value(new_row, new_col, self.matrix[i][j])
+        return submatrix
+    
+    def delete_last_row_col(self):
+        if self.rows <= 1 or self.cols <= 1:
+            raise ValueError("Cannot delete last row and column from a matrix smaller than 2x2.")
+
+        new_matrix = [
+            [self.matrix[i][j] for j in range(self.cols - 1)]
+            for i in range(self.rows - 1)
+        ]
+
+        self.matrix = new_matrix
+        self.rows -= 1
+        self.cols -= 1

@@ -395,6 +395,22 @@ class Graph:
         self.sort_edges()
         self.normalize_edges()
 
+    def _print_marix(self, matrix: Matrix, cols: list, rows: list, filename: str):
+        matrix.print_matrix_with_headers(rows, cols)
+        matrix.save_matrix_with_headers(filename, rows, cols)
+    
+    def _get_specific_point(self, matrix: Matrix, node_1: str, node_2: str):
+        node_1_index = 0
+        node_2_index = 0
+
+        for i, node in enumerate(self.sorted_nodes):
+            if node == node_1:
+                node_1_index = i
+            if node == node_2:
+                node_2_index = i
+
+        return matrix.get_value(node_1_index, node_2_index)
+
     # Matice sousednosti
     def adjacency_matrix(self) -> Matrix:
         matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
@@ -414,23 +430,10 @@ class Graph:
         return matrix
     
     def get_specific_adj_point(self, node_1: str, node_2: str) -> str:
-        matrix = self.adjacency_matrix()
-
-        node_1_index = 0
-        node_2_index = 0
-
-        for i, node in enumerate(self.sorted_nodes):
-            if node == node_1:
-                node_1_index = i
-            if node == node_2:
-                node_2_index = i
-
-        return matrix.get_value(node_1_index, node_2_index)
+        return self._get_specific_point(self.adjacency_matrix(), node_1, node_2)
     
     def print_adjacency_matrix(self):
-        matrix = self.adjacency_matrix()
-        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
-        matrix.save_matrix_with_headers('adjacency_matrix.txt', self.sorted_nodes, self.sorted_nodes)
+        self._print_marix(self.adjacency_matrix(), self.sorted_nodes, self.sorted_nodes, 'adjacency_matrix.txt')
 
     # Matice incidencee
     def incidence_matrix(self) -> Matrix:
@@ -500,23 +503,10 @@ class Graph:
         return matrix
     
     def print_length_matrix(self):
-        matrix = self.length_matrix()
-        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
-        matrix.save_matrix_with_headers('length_matrix.txt', self.sorted_nodes, self.sorted_nodes)
+        self._print_marix(self.length_matrix(), self.sorted_nodes, self.sorted_nodes, 'length_matrix.txt')
 
     def get_specific_length_point(self, node_1: str, node_2: str) -> str:
-        matrix = self.length_matrix()
-
-        node_1_index = 0
-        node_2_index = 0
-
-        for i, node in enumerate(self.sorted_nodes):
-            if node == node_1:
-                node_1_index = i
-            if node == node_2:
-                node_2_index = i
-
-        return matrix.get_value(node_1_index, node_2_index)
+        return self._get_specific_point(self.length_matrix(), node_1, node_2)
     
     # Matice predchudcu
     def predecessor_matrix(self) -> Matrix:
@@ -538,23 +528,49 @@ class Graph:
         return matrix
 
     def print_predecessor_matrix(self):
-        matrix = self.predecessor_matrix()
-        matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
-        matrix.save_matrix_with_headers('predecessor_matrix.txt', self.sorted_nodes, self.sorted_nodes)
+        self._print_marix(self.predecessor_matrix(), self.sorted_nodes, self.sorted_nodes, 'predecessor_matrix.txt')
 
     def get_specific_predecessor_point(self, node_1: str, node_2: str) -> str:
-        matrix = self.predecessor_matrix()
+        return self._get_specific_point(self.predecessor_matrix(), node_1, node_2)
+    
+    # Matice stupnu
+    def degree_matrix(self) -> Matrix:
+        matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
+        matrix.fill_matrix(0)
 
-        node_1_index = 0
-        node_2_index = 0
+        for i, node_name in enumerate(self.sorted_nodes):
+            matrix.set_value(i, i, len(self.get_node_neighbors(node_name)))
 
-        for i, node in enumerate(self.sorted_nodes):
-            if node == node_1:
-                node_1_index = i
-            if node == node_2:
-                node_2_index = i
+        return matrix
+    
+    def print_degree_matrix(self):
+        self._print_marix(self.degree_matrix(), self.sorted_nodes, self.sorted_nodes, 'degree_matrix.txt')
 
-        return matrix.get_value(node_1_index, node_2_index)
+    def get_specific_degree_point(self, node_1: str, node_2: str) -> str:
+        return self._get_specific_point(self.degree_matrix(), node_1, node_2)
+    
+    # Laplacelova matice
+    def laplace_matrix(self) -> Matrix:
+        adjacency_matrix = self.adjacency_matrix()
+        degree_matrix = self.degree_matrix()
+
+        laplace_matrix = Matrix(rows=len(self.sorted_nodes), cols=len(self.sorted_nodes))
+        for i in range(len(self.sorted_nodes)):
+            for j in range(len(self.sorted_nodes)):
+                if i == j:
+                    # Diagonal element: Degree
+                    laplace_matrix.set_value(i, j, degree_matrix.get_value(i, j))
+                else:
+                    # Off-diagonal element: -Adjacency
+                    laplace_matrix.set_value(i, j, -adjacency_matrix.get_value(i, j))
+
+        return laplace_matrix
+
+    def print_laplace_matrix(self):
+        self._print_marix(self.laplace_matrix(), self.sorted_nodes, self.sorted_nodes, 'laplace_matrix.txt')
+
+    def get_specific_laplace_point(self, node_1: str, node_2: str):
+        return self._get_specific_point(self.laplace_matrix(), node_1, node_2)
 
     # TRACE
     def trace_matrix(self, power: int) -> Matrix:
@@ -634,3 +650,11 @@ class Graph:
 
         except Exception as e:
             print(f"Error occurred while saving the results: {e}")
+
+    # Bones of graph
+    def get_number_of_bones(self) -> int:
+        self.get_ready_for_matrix_operations()
+        matrix = self.laplace_matrix()
+        matrix.delete_last_row_col()
+
+        return matrix.determinant()

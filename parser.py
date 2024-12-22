@@ -63,13 +63,14 @@ def read_and_return_input(valid_inputs) -> int:
     return option
     
 def print_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4, 5, 6]
+    valid_inputs = [1, 2, 3, 4, 5, 6, 7]
     print('{}. Properties'.format(valid_inputs[0]))
     print('{}. Characteristics'.format(valid_inputs[1]))
     print('{}. Matrix'.format(valid_inputs[2]))
     print('{}. Trace'.format(valid_inputs[3]))
     print('{}. Print graph'.format(valid_inputs[4]))
     print('{}. BFS & DFS'.format(valid_inputs[5]))
+    print('{}. Bones of the graph'.format(valid_inputs[6]))
     
     option = read_and_return_input(valid_inputs)
     return option
@@ -96,12 +97,13 @@ def read_edge_name(graph: Graph) -> str:
     return edge_name
 
 def print_matrix_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4, 5]
+    valid_inputs = [1, 2, 3, 4, 5, 6]
     print('{}. Adjacency matrix (Matice sousednosti)'.format(valid_inputs[0]))
     print('{}. Incidence matrix (Matice incidence)'.format(valid_inputs[1]))
     print('{}. Length matrix (Matice delek)'.format(valid_inputs[2]))
     print('{}. Predecessor matrix (Matice predchudcu)'.format(valid_inputs[3]))
-    print('{}. Laplace matrix (Laplacelova matice)'.format(valid_inputs[4]))
+    print('{}. Degree matrix (Matice stupnu)'.format(valid_inputs[4]))
+    print('{}. Laplace matrix (Laplacelova matice)'.format(valid_inputs[5]))
 
     option = read_and_return_input(valid_inputs)
     return option
@@ -243,9 +245,47 @@ def handle_matrix(graph: Graph):
         elif option == -1:
             pass
 
-    # Laplacelova matice
+    # Matice stupnu
     elif option == 5:
-        pass
+        option = print_matrix_operations_and_return()
+        print()
+
+        if option == 1:
+            print('Enter node 1:')
+            node_1 = read_node_name(graph)
+            print('Enter node 2:')
+            node_2 = read_node_name(graph)
+            print(graph.get_specific_degree_point(node_1, node_2))
+
+        elif option == 2:
+            number_of_x_in_matrix(graph.degree_matrix())
+
+        elif option == 3:
+            graph.print_degree_matrix()
+
+        elif option == -1:
+            pass
+
+    # Laplaceloval matice
+    elif option == 6:
+        option = print_matrix_operations_and_return()
+        print()
+
+        if option == 1:
+            print('Enter node 1:')
+            node_1 = read_node_name(graph)
+            print('Enter node 2:')
+            node_2 = read_node_name(graph)
+            print(graph.get_specific_laplace_point(node_1, node_2))
+
+        elif option == 2:
+            number_of_x_in_matrix(graph.laplace_matrix())
+
+        elif option == 3:
+            graph.print_laplace_matrix()
+
+        elif option == -1:
+            pass
     
     elif option == -1:
         pass
@@ -329,6 +369,10 @@ def main():
         # BFS & DFS
         elif option == 6:
             handle_bfs_and_dfs(main_graph)
+
+        # Bone of the graph
+        elif option == 7:
+            print('Number of bones: {}'.format(main_graph.get_number_of_bones()))
 
         elif option == -1:
             pass
