@@ -63,7 +63,7 @@ def read_and_return_input(valid_inputs) -> int:
     return option
     
 def print_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4, 5, 6, 7]
+    valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8]
     print('{}. Properties'.format(valid_inputs[0]))
     print('{}. Characteristics'.format(valid_inputs[1]))
     print('{}. Matrix'.format(valid_inputs[2]))
@@ -71,6 +71,7 @@ def print_options_and_return() -> int:
     print('{}. Print graph'.format(valid_inputs[4]))
     print('{}. BFS & DFS'.format(valid_inputs[5]))
     print('{}. Bones of the graph'.format(valid_inputs[6]))
+    print('{}. Binary tree'.format(valid_inputs[7]))
     
     option = read_and_return_input(valid_inputs)
     return option
@@ -374,13 +375,16 @@ def main():
         elif option == 7:
             print('Number of bones: {}'.format(main_graph.get_number_of_bones()))
 
+        elif option == 8:
+            main_graph.print_binary_tree_chars()
+
         elif option == -1:
             pass
 
     except FileNotFoundError:
         print('Error: Input file with name {} does not exist.'.format(args.input))
-    except ValueError as e:
-        print('Error:', e)
+    # except ValueError as e:
+    #     print('Error:', e)
 
 if __name__ == '__main__':
     main()

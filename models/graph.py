@@ -300,18 +300,18 @@ class Graph:
         for edge in self.normalized_edges:
             if self.directed:
                 if edge.start_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
             else:
                 if edge.start_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
                 elif edge.end_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
@@ -324,18 +324,18 @@ class Graph:
         for edge in self.normalized_edges:
             if self.directed:
                 if edge.end_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
             else:
                 if edge.start_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
                 elif edge.end_node.name == node_name:
-                    if edge.name is not None:
+                    if edge.name != '':
                         result.add(edge.name)
                     else:
                         result.add(edge.weight)
@@ -649,12 +649,112 @@ class Graph:
                     file.write('{} '.format(node_name))
 
         except Exception as e:
-            print(f"Error occurred while saving the results: {e}")
+            print("Error occurred while saving the results: {}".format(e))
 
-    # Bones of graph
+    # BONES OF GRAPH
     def get_number_of_bones(self) -> int:
         self.get_ready_for_matrix_operations()
         matrix = self.laplace_matrix()
         matrix.delete_last_row_col()
 
         return matrix.determinant()
+    
+    # BINARY TREE
+    def is_binary_tree(self) -> bool:
+        is_directed = self.is_directed()
+
+        if not self.is_connected():
+            return False
+
+        if self.get_number_of_edges() != self.get_number_of_nodes() - 1:
+            return False
+
+        for node in self.sorted_nodes:
+            degree = 0
+            if is_directed:
+                degree = self.get_node_stage(node)
+            else:
+                degree = self.get_node_input_stage(node)
+
+            if degree > 3:
+                return False
+
+        return True
+    
+    def preorder(self, node_name: str, visited: set):
+        if node_name is None or node_name in visited:
+            return []
+
+        visited.add(node_name)
+
+        successors = sorted(self.get_node_successors(node_name))
+        traversal = [node_name]
+        for successor in successors:
+            traversal += self.preorder(successor, visited)
+        return traversal
+    
+    def inorder(self, node_name: str, visited: set, parent_name: str = None):
+        if node_name is None or node_name in visited:
+            return []
+
+        visited.add(node_name)
+
+        successors = [succ for succ in self.get_node_successors(node_name) if succ != parent_name]
+
+        left = self.inorder(successors[0], visited, node_name) if len(successors) > 0 else []
+        right = self.inorder(successors[1], visited, node_name) if len(successors) > 1 else []
+
+        return left + [node_name] + right
+    
+    def postorder(self, node_name: str, visited: set):
+        if node_name is None or node_name in visited:
+            return []
+
+        visited.add(node_name)
+
+        successors = sorted(self.get_node_successors(node_name))
+        traversal = []
+        for successor in successors:
+            traversal += self.postorder(successor, visited)
+        return traversal + [node_name]
+    
+    def get_root_node(self) -> Node:
+        in_degree = {node.name: 0 for node in self.nodes}
+
+        for edge in self.edges:
+            in_degree[edge.end_node.name] += 1
+
+        for node in self.nodes:
+            if in_degree[node.name] == 0:
+                return node
+
+        return None
+    
+    def print_binary_tree_chars(self):
+        self.get_ready_for_characteristics()
+        if self.is_binary_tree():
+            print('This graph is binary tree')
+            root = self.get_root_node()
+
+            preorder_result = ''
+            inorder_result = ''
+            postorder_result = ''
+
+            preorder = self.preorder(root.name, set())
+            inorder = self.inorder(root.name, set())
+            postorder = self.postorder(root.name, set())
+
+            if len(preorder) != len(inorder) or len(inorder) != len(postorder) or len(preorder) != len(postorder):
+                raise Exception('Length of orders are not same: Preorder {}, inorder {}, postorder {}'.format(len(preorder), len(inorder), len(postorder)))
+
+            for i in range(len(preorder)):
+                preorder_result += preorder[i]
+                inorder_result += inorder[i]
+                postorder_result += postorder[i]
+
+            # Print the results
+            print("Preorder: {}".format(preorder_result))
+            print("Inorder: {}".format(inorder_result))
+            print("Postorder: {}".format(postorder_result))
+        else:
+            print('This graph is NOT binary tree')
