@@ -659,6 +659,65 @@ class Graph:
 
         return matrix.determinant()
     
+    # Minimalni kostra
+    def find(self, parent, node):
+        if parent[node] != node:
+            parent[node] = self.find(parent, parent[node])
+        return parent[node]
+
+    def union(self, parent, rank, u, v):
+        root_u = self.find(parent, u)
+        root_v = self.find(parent, v)
+
+        if root_u != root_v:
+            if rank[root_u] > rank[root_v]:
+                parent[root_v] = root_u
+            elif rank[root_u] < rank[root_v]:
+                parent[root_u] = root_v
+            else:
+                parent[root_v] = root_u
+                rank[root_u] += 1
+
+    def kruskal_minumum(self) -> tuple:
+        parent = {node.name: node.name for node in self.nodes}
+        rank = {node.name: 0 for node in self.nodes}
+
+        sorted_edges = sorted(self.normalized_edges, key=lambda e: e.weight)
+
+        mst = []
+        sum = 0
+
+        for edge in sorted_edges:
+            start = edge.start_node.name
+            end = edge.end_node.name
+
+            if self.find(parent, start) != self.find(parent, end):
+                mst.append(edge.name)
+                self.union(parent, rank, start, end)
+                sum += edge.weight
+
+        return mst, sum
+    
+    def kruskal_maximum(self) -> tuple:
+        parent = {node.name: node.name for node in self.nodes}
+        rank = {node.name: 0 for node in self.nodes}
+
+        sorted_edges = sorted(self.normalized_edges, key=lambda e: e.weight, reverse=True)
+
+        mst = []
+        sum = 0
+
+        for edge in sorted_edges:
+            start = edge.start_node.name
+            end = edge.end_node.name
+
+            if self.find(parent, start) != self.find(parent, end):
+                mst.append(edge.name)
+                sum += edge.weight
+                self.union(parent, rank, start, end)
+
+        return mst, sum
+    
     # BINARY TREE
     def is_binary_tree(self) -> bool:
         is_directed = self.is_directed()

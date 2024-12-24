@@ -374,6 +374,14 @@ def main():
         # Bone of the graph
         elif option == 7:
             print('Number of bones: {}'.format(main_graph.get_number_of_bones()))
+            print('---')
+            minimal_bone = main_graph.kruskal_minumum()
+            print('Minimal bone: {}'.format(minimal_bone[0]))
+            print('Minimal bone sum: {}'.format(minimal_bone[1]))
+            print('---')
+            maximal_bone = main_graph.kruskal_maximum()
+            print('Maximal bone: {}'.format(maximal_bone[0]))
+            print('Maximal bone sum: {}'.format(maximal_bone[1]))
 
         elif option == 8:
             main_graph.print_binary_tree_chars()
