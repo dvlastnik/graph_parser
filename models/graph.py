@@ -817,3 +817,52 @@ class Graph:
             print("Postorder: {}".format(postorder_result))
         else:
             print('This graph is NOT binary tree')
+
+    # SHORTEST PATH
+    def can_use_moore(self) -> bool:
+        if not self.is_weighted():
+            return True
+        
+        for edge in self.edges:
+            if edge.weight != 1:
+                return False
+        return True
+    
+    def can_use_dijkstra(self) -> bool:
+        if not self.is_weighted():
+            return False
+        
+        for edge in self.edges:
+            if edge.weight < 0:
+                return False
+        return True
+    
+    def can_use_bellman_ford(self) -> bool:
+        return self.is_weighted()
+    
+    def can_use_floyd_warshall(self):
+        if not self.is_weighted():
+            return False
+
+        if self.has_negative_cycle():
+            return False
+
+        return True
+
+    # Checking negative cycles, floyd marshall cant be used on graph with negative cycle
+    def has_negative_cycle(self):
+        distances = {node.name: float('inf') for node in self.nodes}
+        start_node = next(iter(self.nodes))
+        distances[start_node.name] = 0
+
+        for _ in range(len(self.nodes) - 1):
+            for edge in self.edges:
+                if distances[edge.start_node.name] + edge.weight < distances[edge.end_node.name]:
+                    distances[edge.end_node.name] = distances[edge.start_node.name] + edge.weight
+
+        for edge in self.edges:
+            if distances[edge.start_node.name] + edge.weight < distances[edge.end_node.name]:
+                return True
+
+        return False
+

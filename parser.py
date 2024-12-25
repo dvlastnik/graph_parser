@@ -63,7 +63,7 @@ def read_and_return_input(valid_inputs) -> int:
     return option
     
 def print_options_and_return() -> int:
-    valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8]
+    valid_inputs = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     print('{}. Properties'.format(valid_inputs[0]))
     print('{}. Characteristics'.format(valid_inputs[1]))
     print('{}. Matrix'.format(valid_inputs[2]))
@@ -72,6 +72,7 @@ def print_options_and_return() -> int:
     print('{}. BFS & DFS'.format(valid_inputs[5]))
     print('{}. Bones of the graph'.format(valid_inputs[6]))
     print('{}. Binary tree'.format(valid_inputs[7]))
+    print('{}. Shortest path (nejkratsi cesta)'.format(valid_inputs[8]))
     
     option = read_and_return_input(valid_inputs)
     return option
@@ -385,6 +386,16 @@ def main():
 
         elif option == 8:
             main_graph.print_binary_tree_chars()
+
+        elif option == 9:
+            if main_graph.can_use_moore():
+                print('Can use Moore alg')
+            elif main_graph.can_use_dijkstra():
+                print('Can use Djikstra alg')
+            elif main_graph.can_use_bellman_ford():
+                print('Can use Bellman-Ford alg')
+            elif main_graph.can_use_floyd_warshall():
+                print('Can use Floyd-Warshall alg')
 
         elif option == -1:
             pass
