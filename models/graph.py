@@ -1,4 +1,5 @@
 from collections import deque
+import heapq
 from itertools import combinations
 
 from models.matrix import Matrix
@@ -865,4 +866,45 @@ class Graph:
                 return True
 
         return False
+    
+    def moore_shortest_path(self, start_node_name: str):
+        distances = {node.name: ['-', float('inf')] for node in self.nodes}
+        distances[start_node_name][1] = 0
+        queue = deque([start_node_name])
+
+        while queue:
+            current_node = queue.popleft()
+
+            for edge in self.normalized_edges:
+                if edge.start_node.name == current_node:
+                    neighbor = edge.end_node.name
+                    if distances[neighbor][1] == float('inf'):
+                        distances[neighbor][1] = distances[current_node][1] + 1
+                        distances[neighbor][0] = current_node
+                        queue.append(neighbor)
+
+        return distances
+    
+    def dijkstra_shortest_path(self, start_node_name: str):
+        distances = {node.name: ['-', float('inf')] for node in self.nodes}
+        distances[start_node_name][1] = 0
+        priority_queue = [(0, start_node_name)]
+
+        while priority_queue:
+            current_distance, current_node = heapq.heappop(priority_queue)
+
+            if current_distance > distances[current_node][1]:
+                continue
+
+            for edge in self.normalized_edges:
+                if edge.start_node.name == current_node:
+                    neighbor = edge.end_node.name
+                    new_distance = current_distance + edge.weight
+
+                    if new_distance < distances[neighbor][1]:
+                        distances[neighbor][1] = new_distance
+                        distances[neighbor][0] = current_node
+                        heapq.heappush(priority_queue, (new_distance, neighbor))
+
+        return distances
 
