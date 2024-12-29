@@ -295,6 +295,21 @@ class Graph:
     def get_node_neighbors(self, node_name: str) -> set:
         return self.get_node_ancestors(node_name) | self.get_node_successors(node_name)
     
+    def get_node_output_edges(self, node_name: str) -> list:
+        result = []
+
+        for edge in self.normalized_edges:
+            if self.directed:
+                if edge.start_node.name == node_name:
+                    result.append(edge)
+            else:
+                if edge.start_node.name == node_name:
+                    result.append(edge)
+                elif edge.end_node.name == node_name:
+                    result.append(edge)
+
+        return result
+
     def get_node_output_neighborhood(self, node_name: str) -> set:
         result = set()
 
@@ -883,6 +898,7 @@ class Graph:
                         distances[neighbor][0] = current_node
                         queue.append(neighbor)
 
+        self.save_shortest_path_to_file('moore.txt', distances)
         return distances
     
     def dijkstra_shortest_path(self, start_node_name: str):
@@ -906,5 +922,67 @@ class Graph:
                         distances[neighbor][0] = current_node
                         heapq.heappush(priority_queue, (new_distance, neighbor))
 
+        self.save_shortest_path_to_file('djikstra.txt', distances)
         return distances
+    
+    def bellman_ford_shortest_path(self, start_node_name: str):
+        results = {node.name: ['-', float('inf'), 0] for node in self.nodes}
+        results[start_node_name][1] = 0
 
+        queue = deque([start_node_name])
+
+        while queue:
+            current_node_name = queue.popleft()
+
+            edges = self.get_node_output_edges(current_node_name)
+            for edge in edges:
+                if self.directed:
+                    start = edge.start_node.name
+                    end = edge.end_node.name
+                    weight = edge.weight
+                    if results[start][1] + weight < results[end][1]:
+                        results[end][1] = results[start][1] + weight
+                        results[end][0] = start
+
+                        results[end][2] = results[start][2] + 1
+
+                        queue.append(end)
+                else:
+                    start = edge.start_node.name
+                    end = edge.end_node.name
+                    weight = edge.weight
+
+                    if results[start][1] + weight < results[end][1]:
+                        results[end][1] = results[start][1] + weight
+                        results[end][0] = start
+
+                        results[end][2] = results[start][2] + 1
+
+                        queue.append(end)
+                    elif results[end][1] + weight < results[start][1]:
+                        results[start][1] = results[end][1] + weight
+                        results[start][0] = end
+
+                        results[start][2] = results[end][2] + 1
+
+                        queue.append(start)
+
+        self.save_shortest_path_to_file('bellman_ford.txt', results)
+        return results
+    
+    def save_shortest_path_to_file(self, name: str, results: dict):
+        try:
+            with open(name, 'w') as file:
+                for node in results.keys():
+                    r = '{} = ('.format(node)
+
+                    for i in range(len(results[node])):
+                        if i == len(results[node])-1:
+                            r += '{})\n'.format(results[node][i])
+                        else:
+                            r += '{}, '.format(results[node][i])
+                    
+                    file.write(r)
+
+        except Exception as e:
+            print("Error occurred while saving the results: {}".format(e))

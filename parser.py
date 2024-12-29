@@ -389,16 +389,18 @@ def main():
 
         elif option == 9:
             main_graph.get_ready_for_characteristics()
+            
             node = read_node_name(main_graph)
 
             if main_graph.can_use_moore():
                 print('Can use Moore alg')
                 print(main_graph.moore_shortest_path(node))
+            elif main_graph.can_use_bellman_ford():
+                print('Can use Bellman-Ford alg')
+                print(main_graph.bellman_ford_shortest_path(node))
             elif main_graph.can_use_dijkstra():
                 print('Can use Djikstra alg')
                 print(main_graph.dijkstra_shortest_path(node))
-            elif main_graph.can_use_bellman_ford():
-                print('Can use Bellman-Ford alg')
             elif main_graph.can_use_floyd_warshall():
                 print('Can use Floyd-Warshall alg')
 
