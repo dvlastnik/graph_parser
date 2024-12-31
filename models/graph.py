@@ -882,6 +882,73 @@ class Graph:
 
         return False
     
+    def save_shortest_path_to_file(self, name: str, results: dict):
+        try:
+            with open(name, 'w') as file:
+                for node in results.keys():
+                    r = '{} = ('.format(node)
+
+                    for i in range(len(results[node])):
+                        if i == len(results[node])-1:
+                            r += '{})\n'.format(results[node][i])
+                        else:
+                            r += '{}, '.format(results[node][i])
+                    
+                    file.write(r)
+
+        except Exception as e:
+            print("Error occurred while saving the results: {}".format(e))
+    
+    def print_properties_for_shortest_path(self, distances: dict, filename: str):
+        if float('inf') in distances.values():
+            print('Float(inf) is in this shortest path')
+
+        reachable_distances = [dist[1] for dist in distances.values() if dist[1] != float('inf')]
+        max_length = max(reachable_distances, default=None)
+        min_length = min(reachable_distances, default=None)
+        not_connected_count = sum(1 for dist in distances.values() if dist[1] == float('inf'))
+        connected_count = len(reachable_distances)
+
+        print('Maximal path length: {}'.format(max_length))
+        print('Minimal path length: {}'.format(min_length))
+        print('Number of nodes not connected: {}'.format(not_connected_count))
+        print('Number of nodes connected: {}'.format(connected_count))
+        
+        self.save_shortest_path_to_file(filename, distances)
+
+    def get_path_from_distances(self, distances: dict, start_node: str, end_node: str) -> list:
+        if distances[end_node][1] == float('inf'):
+            return f"No path exists from {start_node} to {end_node}."
+
+        path = []
+        current_node = end_node
+
+        while current_node != '-':
+            path.append(current_node)
+            current_node = distances[current_node][0]
+
+        path.reverse()
+        path_str = ''.join(path)
+        length = distances[end_node][1]
+
+        return path_str, length
+    
+    def get_path_from_floyd(self, predecessor_matrix: Matrix, start_node: str, end_node: str):
+        start_idx = self.sorted_nodes.index(start_node)
+        end_idx = self.sorted_nodes.index(end_node)
+
+        if predecessor_matrix.get_value(start_idx, end_idx) is None:
+            return f"No path exists from {start_node} to {end_node}."
+
+        path = [end_node]
+        while start_idx != end_idx:
+            end_idx = predecessor_matrix.get_value(start_idx, end_idx)
+            path.append(self.sorted_nodes[end_idx])
+
+        path.reverse()
+        path_str = ''.join(path)
+        return path_str
+    
     def moore_shortest_path(self, start_node_name: str):
         distances = {node.name: ['-', float('inf')] for node in self.nodes}
         distances[start_node_name][1] = 0
@@ -898,7 +965,8 @@ class Graph:
                         distances[neighbor][0] = current_node
                         queue.append(neighbor)
 
-        self.save_shortest_path_to_file('moore.txt', distances)
+        self.print_properties_for_shortest_path(distances=distances, filename='moore.txt')
+
         return distances
     
     def dijkstra_shortest_path(self, start_node_name: str):
@@ -922,7 +990,7 @@ class Graph:
                         distances[neighbor][0] = current_node
                         heapq.heappush(priority_queue, (new_distance, neighbor))
 
-        self.save_shortest_path_to_file('djikstra.txt', distances)
+        self.print_properties_for_shortest_path(distances=distances, filename='dijkstra.txt')
         return distances
     
     def bellman_ford_shortest_path(self, start_node_name: str):
@@ -967,22 +1035,61 @@ class Graph:
 
                         queue.append(start)
 
-        self.save_shortest_path_to_file('bellman_ford.txt', results)
+        self.print_properties_for_shortest_path(distances=results, filename='dijkstra.txt')
         return results
     
-    def save_shortest_path_to_file(self, name: str, results: dict):
-        try:
-            with open(name, 'w') as file:
-                for node in results.keys():
-                    r = '{} = ('.format(node)
+    def floyd_warshall(self):
+        dist_matrix = self.length_matrix()
+        num_nodes = dist_matrix.rows
 
-                    for i in range(len(results[node])):
-                        if i == len(results[node])-1:
-                            r += '{})\n'.format(results[node][i])
-                        else:
-                            r += '{}, '.format(results[node][i])
-                    
-                    file.write(r)
+        predecessor_matrix = Matrix(num_nodes, num_nodes)
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                predecessor_matrix.set_value(i, j, i if dist_matrix.get_value(i, j) not in [float('inf'), '∞'] else None)
 
-        except Exception as e:
-            print("Error occurred while saving the results: {}".format(e))
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                value = dist_matrix.get_value(i, j)
+                if value == '∞' or not isinstance(value, (int, float)):
+                    dist_matrix.set_value(i, j, float('inf'))
+
+        for k in range(num_nodes):
+            for i in range(num_nodes):
+                for j in range(num_nodes):
+                    current_distance = dist_matrix.get_value(i, j)
+                    through_k_distance = dist_matrix.get_value(i, k) + dist_matrix.get_value(k, j)
+
+                    if through_k_distance < current_distance:
+                        dist_matrix.set_value(i, j, through_k_distance)
+                        predecessor_matrix.set_value(i, j, predecessor_matrix.get_value(k, j))
+
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if dist_matrix.get_value(i, j) == float('inf'):
+                    dist_matrix.set_value(i, j, '∞')
+
+        reachable_distances = []
+        not_connected_count = 0
+
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                value = dist_matrix.get_value(i, j)
+                if value != '∞' and i != j:
+                    reachable_distances.append(value)
+                elif value == '∞':
+                    not_connected_count += 1
+
+        max_length = max(reachable_distances, default=None)
+        min_length = min(reachable_distances, default=None)
+        connected_count = len(reachable_distances)
+
+        print(f"Maximal path length: {max_length}")
+        print(f"Minimal path length: {min_length}")
+        print(f"Number of connected paths: {connected_count}")
+        print(f"Number of unconnected paths: {not_connected_count}")
+
+        dist_matrix.save_matrix_with_headers('floyd_warshall.txt', self.sorted_nodes, self.sorted_nodes)
+        predecessor_matrix.save_matrix_with_headers('floyd_warshall_.txt', self.sorted_nodes, self.sorted_nodes)
+        dist_matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
+        
+        return dist_matrix, predecessor_matrix

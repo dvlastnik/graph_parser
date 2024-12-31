@@ -135,6 +135,16 @@ def print_bfs_dfs_options_and_return() -> int:
     option = read_and_return_input(valid_inputs)
     return option
 
+def print_shortest_path_options() -> int:
+    valid_inputs = [1, 2, 3, 4]
+    print('{}. Moore'.format(valid_inputs[0]))
+    print('{}. Djikstra'.format(valid_inputs[1]))
+    print('{}. Bellman-Ford'.format(valid_inputs[2]))
+    print('{}. Floyd-Warshall'.format(valid_inputs[3]))
+
+    option = read_and_return_input(valid_inputs)
+    return option
+
 def read_and_return_power() -> int:
     print('Enter power (n)')
     return int(input())
@@ -337,6 +347,14 @@ def handle_bfs_and_dfs(graph: Graph):
     else:
         pass
 
+def handle_shortest_path_distances(graph: Graph, func):
+    node = read_node_name(graph)
+    distances = func(node)
+    end_node = read_node_name(graph)
+    path, length = graph.get_path_from_distances(distances, node, end_node)
+    print(f"Path from A to C: {path}")
+    print(f"Path length: {length}")
+
 def main():
     args = parse_args()
     main_graph = Graph()
@@ -390,19 +408,30 @@ def main():
         elif option == 9:
             main_graph.get_ready_for_characteristics()
             
-            node = read_node_name(main_graph)
+            print('Can use Moore? {}'.format(main_graph.can_use_moore()))
+            print('Can use Djikstra? {}'.format(main_graph.can_use_dijkstra()))
+            print('Can use Bellman-Ford? {}'.format(main_graph.can_use_bellman_ford()))
+            print('Can use Floyd-Warshall? {}'.format(main_graph.can_use_floyd_warshall()))
 
-            if main_graph.can_use_moore():
-                print('Can use Moore alg')
-                print(main_graph.moore_shortest_path(node))
-            elif main_graph.can_use_bellman_ford():
-                print('Can use Bellman-Ford alg')
-                print(main_graph.bellman_ford_shortest_path(node))
-            elif main_graph.can_use_dijkstra():
-                print('Can use Djikstra alg')
-                print(main_graph.dijkstra_shortest_path(node))
-            elif main_graph.can_use_floyd_warshall():
-                print('Can use Floyd-Warshall alg')
+            option = print_shortest_path_options()
+
+            if option == 1:
+                handle_shortest_path_distances(main_graph, main_graph.moore_shortest_path)
+            elif option == 4:
+                dist_matrix, predecessor_matrix = main_graph.floyd_warshall()
+                print('From:')
+                start_node = read_node_name(main_graph)
+                print('To:')
+                end_node = read_node_name(main_graph)
+                path = main_graph.get_path_from_floyd(predecessor_matrix, start_node, end_node)
+                length = main_graph._get_specific_point(dist_matrix, start_node, end_node)
+
+                print('Path from A to C: {}'.format(path))
+                print('Path length: {}'.format(length))
+            elif option == 3:
+                handle_shortest_path_distances(main_graph, main_graph.bellman_ford_shortest_path)
+            elif option == 2:
+                handle_shortest_path_distances(main_graph, main_graph.dijkstra_shortest_path)
 
         elif option == -1:
             pass
