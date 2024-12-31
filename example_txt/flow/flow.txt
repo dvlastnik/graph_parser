@@ -1,0 +1,15 @@
+u s;
+u t;
+u A;
+u B;
+u C;
+u D;
+h s > A 9 :h1;
+h s > B 8 :h2;
+h B > t 5 :h3;
+h B > A 2 :h4;
+h B > D 3 :h5;
+h A > C 4 :h6;
+h A > D 4 :h7;
+h C > t 5 :h8;
+h D > t 6 :h9;

@@ -1,6 +1,7 @@
 from collections import deque
 import heapq
 from itertools import combinations
+import math
 
 from models.matrix import Matrix
 from models.node import Node
@@ -900,10 +901,10 @@ class Graph:
             print("Error occurred while saving the results: {}".format(e))
     
     def print_properties_for_shortest_path(self, distances: dict, filename: str):
-        if float('inf') in distances.values():
+        if float('inf') in distances.values() or float('-inf') in distances.values():
             print('Float(inf) is in this shortest path')
 
-        reachable_distances = [dist[1] for dist in distances.values() if dist[1] != float('inf')]
+        reachable_distances = [dist[1] for dist in distances.values() if dist[1] != float('inf') or dist[1] != float('-inf')]
         max_length = max(reachable_distances, default=None)
         min_length = min(reachable_distances, default=None)
         not_connected_count = sum(1 for dist in distances.values() if dist[1] == float('inf'))
@@ -916,9 +917,9 @@ class Graph:
         
         self.save_shortest_path_to_file(filename, distances)
 
-    def get_path_from_distances(self, distances: dict, start_node: str, end_node: str) -> list:
+    def get_path_from_distances(self, distances: dict, start_node: str, end_node: str) -> tuple:
         if distances[end_node][1] == float('inf'):
-            return f"No path exists from {start_node} to {end_node}."
+            return 'No path exists from {} to {}.'.format(start_node, end_node), None
 
         path = []
         current_node = end_node
@@ -938,11 +939,13 @@ class Graph:
         end_idx = self.sorted_nodes.index(end_node)
 
         if predecessor_matrix.get_value(start_idx, end_idx) is None:
-            return f"No path exists from {start_node} to {end_node}."
+            return 'No path exists from {} to {}.'.format(start_node, end_node)
 
         path = [end_node]
         while start_idx != end_idx:
             end_idx = predecessor_matrix.get_value(start_idx, end_idx)
+            if end_idx == '-':
+                return 'No path exists from {} to {}.'.format(start_node, end_node)
             path.append(self.sorted_nodes[end_idx])
 
         path.reverse()
@@ -1045,7 +1048,7 @@ class Graph:
         predecessor_matrix = Matrix(num_nodes, num_nodes)
         for i in range(num_nodes):
             for j in range(num_nodes):
-                predecessor_matrix.set_value(i, j, i if dist_matrix.get_value(i, j) not in [float('inf'), '∞'] else None)
+                predecessor_matrix.set_value(i, j, i if dist_matrix.get_value(i, j) not in [float('inf'), '∞'] else '-')
 
         for i in range(num_nodes):
             for j in range(num_nodes):
@@ -1083,13 +1086,135 @@ class Graph:
         min_length = min(reachable_distances, default=None)
         connected_count = len(reachable_distances)
 
-        print(f"Maximal path length: {max_length}")
-        print(f"Minimal path length: {min_length}")
-        print(f"Number of connected paths: {connected_count}")
-        print(f"Number of unconnected paths: {not_connected_count}")
+        print('Maximal path length: {}'.format(max_length))
+        print('Minimal path length: {}'.format(min_length))
+        print('Number of connected paths: {}'.format(connected_count))
+        print('Number of unconnected paths: {}'.format(not_connected_count))
 
         dist_matrix.save_matrix_with_headers('floyd_warshall.txt', self.sorted_nodes, self.sorted_nodes)
         predecessor_matrix.save_matrix_with_headers('floyd_warshall_.txt', self.sorted_nodes, self.sorted_nodes)
-        dist_matrix.print_matrix_with_headers(self.sorted_nodes, self.sorted_nodes)
         
         return dist_matrix, predecessor_matrix
+    
+    def get_ready_for_longest_path(self):
+        for i in range(len(self.edges)):
+            self.edges[i].weight *= -1
+
+    def get_ready_for_safest_path(self):
+        for i in range(len(self.edges)):
+            if self.edges[i].weight == 0:
+                continue
+            self.edges[i].weight = math.log10(self.edges[i].weight)
+
+    def longest_path_with_cycles(self, start_node_name: str, end_node_name: str):
+        def dfs(node, visited, current_length, path, max_path, max_length):
+            visited.add(node)
+            path.append(node)
+
+            if node == end_node_name:
+                if current_length > max_length[0]:
+                    max_length[0] = current_length
+                    max_path[:] = path[:]
+            else:
+                for edge in self.get_node_output_edges(node):
+                    neighbor = edge.end_node.name
+                    weight = edge.weight if edge.weight is not None else 1
+                    if neighbor not in visited:
+                        dfs(neighbor, visited, current_length + weight, path, max_path, max_length)
+
+            path.pop()
+            visited.remove(node)
+
+        visited = set()
+        max_path = []
+        max_length = [-float('inf')]
+        dfs(start_node_name, visited, 0, [], max_path, max_length)
+
+        if max_length[0] == -float('inf'):
+            return None, None
+
+        edges_in_path = []
+        for i in range(len(max_path) - 1):
+            for edge in self.edges:
+                if edge.start_node.name == max_path[i] and edge.end_node.name == max_path[i + 1]:
+                    edges_in_path.append(edge.name)
+                    break
+
+        print("Edges in the longest path with cycles:", edges_in_path)
+
+        return ''.join(max_path), max_length[0]
+
+    def widest_path_from_start(self, start_node_name: str):
+        results = {node.name: ['-', float('-inf')] for node in self.nodes}
+        results[start_node_name][1] = 0
+        
+        priority_queue = [(-float('inf'), start_node_name)]
+
+        while priority_queue:
+            current_width, current_node = heapq.heappop(priority_queue)
+            current_width = -current_width
+
+            for edge in self.get_node_output_edges(current_node):
+                neighbor = edge.end_node.name
+                bottleneck = min(current_width, edge.weight)
+                if bottleneck > results[neighbor][1]:
+                    results[neighbor][1] = bottleneck
+                    results[neighbor][0] = current_node
+                    heapq.heappush(priority_queue, (-bottleneck, neighbor))
+
+        self.print_properties_for_shortest_path(distances=results, filename='widest.txt')
+
+        return results
+    
+    # MAXIMAL FLOW IN NET
+    def ford_fulkerson_max_flow(self, source_name: str, sink_name: str):
+        self.sort_nodes()
+        node_indices = {node: i for i, node in enumerate(self.sorted_nodes)}
+        num_nodes = len(self.sorted_nodes)
+
+        capacity = [[0] * num_nodes for _ in range(num_nodes)]
+        for edge in self.normalized_edges:
+            u = node_indices[edge.start_node.name]
+            v = node_indices[edge.end_node.name]
+            capacity[u][v] = edge.weight
+
+        residual_capacity = [row[:] for row in capacity]
+        parent = [-1] * num_nodes
+
+        def bfs_find_augmenting_path(source_idx, sink_idx):
+            visited = [False] * num_nodes
+            queue = deque([source_idx])
+            visited[source_idx] = True
+
+            while queue:
+                current = queue.popleft()
+                for neighbor in range(num_nodes):
+                    if not visited[neighbor] and residual_capacity[current][neighbor] > 0:
+                        queue.append(neighbor)
+                        visited[neighbor] = True
+                        parent[neighbor] = current
+                        if neighbor == sink_idx:
+                            return True
+            return False
+
+        max_flow = 0
+        source_idx = node_indices[source_name]
+        sink_idx = node_indices[sink_name]
+
+        while bfs_find_augmenting_path(source_idx, sink_idx):
+            path_flow = float('inf')
+            s = sink_idx
+            while s != source_idx:
+                path_flow = min(path_flow, residual_capacity[parent[s]][s])
+                s = parent[s]
+
+            v = sink_idx
+            while v != source_idx:
+                u = parent[v]
+                residual_capacity[u][v] -= path_flow
+                residual_capacity[v][u] += path_flow
+                v = u
+
+            max_flow += path_flow
+
+        return max_flow
