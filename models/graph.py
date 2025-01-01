@@ -669,12 +669,28 @@ class Graph:
             print("Error occurred while saving the results: {}".format(e))
 
     # BONES OF GRAPH
-    def get_number_of_bones(self) -> int:
-        self.get_ready_for_matrix_operations()
-        matrix = self.laplace_matrix()
-        matrix.delete_last_row_col()
+    def is_tree(self):
+        return self.is_connected() and len(self.edges) == len(self.nodes) - 1
 
-        return matrix.determinant()
+    def get_number_of_bones(self) -> int:
+        num_nodes = len(self.nodes)
+    
+        required_edges = num_nodes - 1
+
+        if len(self.edges) < required_edges:
+            return 0
+
+        spanning_trees_count = 0
+
+        for edge_subset in combinations(self.edges, required_edges):
+            subgraph = Graph()
+            subgraph.nodes = self.nodes.copy()
+            subgraph.edges = list(edge_subset)
+
+            if subgraph.is_tree():
+                spanning_trees_count += 1
+
+        return spanning_trees_count
     
     # Minimalni kostra
     def find(self, parent, node):
@@ -949,7 +965,7 @@ class Graph:
             path.append(self.sorted_nodes[end_idx])
 
         path.reverse()
-        path_str = ''.join(path)
+        path_str = '>'.join(path)
         return path_str
     
     def moore_shortest_path(self, start_node_name: str):
@@ -1222,5 +1238,5 @@ class Graph:
             print('{} with flow: {}'.format(' > '.join(path), path_flow))
             max_flow += path_flow
 
-        print(f"Total maximum flow: {max_flow}")
+        print('Total maximum flow: {}'.format(max_flow))
         return max_flow

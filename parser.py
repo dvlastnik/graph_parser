@@ -88,14 +88,19 @@ def read_node_name(graph: Graph) -> str:
     print('Pick node name:')
     print(graph.sorted_nodes)
 
-    node_name = str(input())
-    has_lowercase = any(any(c.islower() for c in node) for node in graph.sorted_nodes)
-    if not has_lowercase:
-        node_name = node_name.capitalize()
+    node_name = str(input()).strip()
+    has_lowercase = any(node.islower() for node in graph.sorted_nodes)
 
-    if node_name not in graph.sorted_nodes:
-        print('Not a valid option, ending script...')
-        return -1
+    if has_lowercase:
+        if node_name not in graph.sorted_nodes:
+            print('Not a valid option, ending script...')
+            return -1
+    else:
+        node_name = node_name.upper()
+        if node_name not in graph.sorted_nodes:
+            print('Not a valid option, ending script...')
+            return -1
+
     return node_name
 
 def read_edge_name(graph: Graph) -> str:
@@ -403,6 +408,7 @@ def main():
 
         # Bone of the graph
         elif option == 7:
+            main_graph.get_ready_for_characteristics()
             print('Number of bones: {}'.format(main_graph.get_number_of_bones()))
             print('---')
             minimal_bone = main_graph.kruskal_minumum()
