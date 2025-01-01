@@ -945,7 +945,7 @@ class Graph:
             current_node = distances[current_node][0]
 
         path.reverse()
-        path_str = ''.join(path)
+        path_str = '>'.join(path)
         length = distances[end_node][1]
 
         return path_str, length
