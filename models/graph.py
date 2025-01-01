@@ -1204,9 +1204,13 @@ class Graph:
         while bfs_find_augmenting_path(source_idx, sink_idx):
             path_flow = float('inf')
             s = sink_idx
+            path = []
             while s != source_idx:
+                path.append(self.sorted_nodes[s])
                 path_flow = min(path_flow, residual_capacity[parent[s]][s])
                 s = parent[s]
+            path.append(self.sorted_nodes[source_idx])
+            path.reverse()
 
             v = sink_idx
             while v != source_idx:
@@ -1215,6 +1219,8 @@ class Graph:
                 residual_capacity[v][u] += path_flow
                 v = u
 
+            print('{} with flow: {}'.format(' > '.join(path), path_flow))
             max_flow += path_flow
 
+        print(f"Total maximum flow: {max_flow}")
         return max_flow
